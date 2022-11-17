@@ -1,0 +1,1 @@
+ALTER TABLE usr ALTER COLUMN password TYPE varchar(255);

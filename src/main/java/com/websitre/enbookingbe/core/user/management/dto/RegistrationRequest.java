@@ -4,22 +4,22 @@ import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import static com.websitre.enbookingbe.core.user.management.dto.UserValidationConstants.*;
+import static com.websitre.enbookingbe.core.user.management.dto.UserValidationConstants.PASSWORD_MAX_LENGTH;
+import static com.websitre.enbookingbe.core.user.management.dto.UserValidationConstants.PASSWORD_MIN_LENGTH;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterRequest {
+public class RegistrationRequest {
 
     @NotBlank
-    @Pattern(regexp = LOGIN_REGEX)
-    @Size(min = 1, max = 50)
-    private String username;
+    @Email
+    @Size(min = 5, max = 254)
+    private String email;
 
     @NotBlank
     @Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH)
@@ -34,10 +34,6 @@ public class UserRegisterRequest {
 
     @Size(max = 50)
     private String lastName;
-
-    @Email
-    @Size(min = 5, max = 254)
-    private String email;
 
     @Size(max = 256)
     private String imageUrl;

@@ -29,7 +29,7 @@ public class UserController {
     @PostMapping("/authenticate")
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginRequest request) {
         final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            request.getUsername(),
+            request.getEmail(),
             request.getPassword()
         );
 

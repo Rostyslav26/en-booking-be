@@ -17,11 +17,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User save(User user) {
-        final String username = user.getUsername();
         final String email = user.getEmail();
-        if (userRepository.existsByUsername(username)) {
-            throw new UserAlreadyExistsException(username);
-        } else if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmail(email)) {
             throw new UserAlreadyExistsException(email);
         }
 
@@ -35,6 +32,6 @@ public class UserService {
         user.activated(true);
         user.setActivationKey(null);
 
-        log.debug("User '{}' has been activated", user.getUsername());
+        log.debug("User '{}' has been activated", user.getEmail());
     }
 }

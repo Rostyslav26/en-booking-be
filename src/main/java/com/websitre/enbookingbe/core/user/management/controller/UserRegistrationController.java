@@ -2,7 +2,7 @@ package com.websitre.enbookingbe.core.user.management.controller;
 
 import com.websitre.enbookingbe.core.exception.BadRequestException;
 import com.websitre.enbookingbe.core.user.management.domain.User;
-import com.websitre.enbookingbe.core.user.management.dto.UserRegisterRequest;
+import com.websitre.enbookingbe.core.user.management.dto.RegistrationRequest;
 import com.websitre.enbookingbe.core.user.management.mapper.UserMapper;
 import com.websitre.enbookingbe.core.user.management.service.UserMailService;
 import com.websitre.enbookingbe.core.user.management.service.UserService;
@@ -21,7 +21,7 @@ public class UserRegistrationController {
     private final UserMailService userMailService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid UserRegisterRequest dto) {
+    public ResponseEntity<?> register(@RequestBody @Valid RegistrationRequest dto) {
         if (!dto.getPassword().equals(dto.getConfirmedPassword())) {
             throw new BadRequestException("Passwords are not confirmed!");
         }

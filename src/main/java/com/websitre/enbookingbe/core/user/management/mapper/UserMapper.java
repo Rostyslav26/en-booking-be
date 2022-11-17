@@ -1,8 +1,8 @@
 package com.websitre.enbookingbe.core.user.management.mapper;
 
 import com.websitre.enbookingbe.core.user.management.domain.User;
-import com.websitre.enbookingbe.core.user.management.dto.UserRegisterRequest;
+import com.websitre.enbookingbe.core.user.management.dto.RegistrationRequest;
 
 public interface UserMapper {
-    User toNewUser(UserRegisterRequest dto);
+    User toNewUser(RegistrationRequest dto);
 }

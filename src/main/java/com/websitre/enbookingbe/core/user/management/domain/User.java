@@ -1,5 +1,6 @@
 package com.websitre.enbookingbe.core.user.management.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,54 +28,46 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Integer id;
 
     @NotNull
-    @Column(name = "username")
-    private String username;
-
-    @NotNull
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
-    @NotNull
-    @Column(name = "email")
     private String email;
 
-    @Column(name = "image_url")
+    @NotNull
+    private String password;
+
+    @NotNull
+    private String firstName;
+
+    @NotNull
+    private String lastName;
+
     private String imageUrl;
 
     @NotNull
     @Accessors(fluent = true)
-    @Column(name = "activated")
     private Boolean activated;
 
-    @Column(name = "lang_key")
     private String langKey;
 
-    @Column(name = "activation_key")
     private String activationKey;
 
-    @Column(name = "reset_key")
     private String resetKey;
 
-    @Column(name = "reset_date")
     @CreationTimestamp
     private Date resetDate;
 
     @ManyToMany
     @JoinTable(
-        name = "user_authority",
-        joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+        name = "usr_authority",
+        joinColumns = {@JoinColumn(name = "usr_id", referencedColumnName = "id")},
         inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")}
     )
     @BatchSize(size = 20)
+    @Setter(AccessLevel.PRIVATE)
     private Set<Authority> authorities = new HashSet<>();
+
+    public void addAuthority(Authority authority) {
+        this.authorities.add(authority);
+    }
 }

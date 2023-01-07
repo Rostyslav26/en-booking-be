@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <title>EnBook | Activate User</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body>
+        <h1>Activate Your Account</h1>
+        <p>Hello,</p>
+        <p>Thank you for signing up for our service. To complete your registration, please click the link below to activate your account:</p>
+        <p>
+            <a th:with="url=(@{|${baseUrl}/api/v1/user/activate?key=${user.activationKey}|})" th:href="${url}" th:text="${url}">Activation link</a>
+        </p>
+        <p>If you have any issues, please don't hesitate to contact us at support@ourservice.com.</p>
+        <p>Best regards,</p>
+        <p>The EnBook</p>
+    </body>
+</html>

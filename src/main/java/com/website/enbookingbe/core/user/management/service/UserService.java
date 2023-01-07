@@ -36,6 +36,7 @@ public class UserService {
 
         user.setActivated(true);
         user.setActivationKey(null);
+        userRepository.update(user);
 
         log.debug("User '{}' has been activated", user.getEmail());
     }

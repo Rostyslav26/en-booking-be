@@ -14,6 +14,6 @@ public class UserMailService {
 
     public void sendActivationEmail(User user) {
         log.debug("Sending activation email to '{}'", user.getEmail());
-        mailService.sendEmailFromTemplate(user, "templates/mail/activationEmail", "email.activation.title");
+        mailService.sendEmailFromTemplate(user, "mail/activation-email");
     }
 }

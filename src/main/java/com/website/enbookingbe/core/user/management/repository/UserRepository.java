@@ -82,4 +82,22 @@ public class UserRepository {
             .as("roles")
             .convertFrom(f -> f.intoSet(roleMapper));
     }
+
+    public void update(User user) {
+        user.setLastModifiedDate(LocalDateTime.now());
+
+        dsl.update(USER)
+            .set(USER.FIRST_NAME, user.getFirstName())
+            .set(USER.LAST_NAME, user.getLastName())
+            .set(USER.IMAGE_URL, user.getImageUrl())
+            .set(USER.ACTIVATION_KEY, user.getActivationKey())
+            .set(USER.ACTIVATED, user.getActivated())
+            .set(USER.LANG_KEY, user.getLangKey())
+            .set(USER.LAST_MODIFIED_BY, user.getLastModifiedBy())
+            .set(USER.LAST_MODIFIED_DATE, user.getLastModifiedDate())
+            .set(USER.RESET_DATE, user.getResetDate())
+            .set(USER.RESET_KEY, user.getResetKey())
+            .where(USER.ID.eq(user.getId()))
+            .execute();
+    }
 }

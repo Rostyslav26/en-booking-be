@@ -41,15 +41,14 @@ public class MailService {
     }
 
     @Async
-    public void sendEmail(String to, String subject, String content, boolean isMultipart, boolean isHtml) {
-        logSendEmail(to, subject, content, isMultipart, isHtml);
+    public void sendEmail(String to, String content, boolean isMultipart, boolean isHtml) {
+        logSendEmail(to, content, isMultipart, isHtml);
 
         final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
             message.setTo(to);
             message.setFrom(from);
-            message.setSubject(subject);
             message.setText(content, isHtml);
 
             javaMailSender.send(mimeMessage);
@@ -60,24 +59,22 @@ public class MailService {
     }
 
     @Async
-    public void sendEmailFromTemplate(User user, String templateName, String titleKey) {
+    public void sendEmailFromTemplate(User user, String templateName) {
         final Locale locale = Locale.forLanguageTag(user.getLangKey());
         final Context context = new Context(locale);
         context.setVariable(USER, user);
         context.setVariable(BASE_URL, baseUrl);
 
         final String content = templateEngine.process(templateName, context);
-        final String subject = messageSource.getMessage(titleKey, null, locale);
-        sendEmail(user.getEmail(), subject, content, false, true);
+        sendEmail(user.getEmail(), content, false, true);
     }
 
-    private void logSendEmail(String to, String subject, String content, boolean isMultipart, boolean isHtml) {
+    private void logSendEmail(String to, String content, boolean isMultipart, boolean isHtml) {
         log.debug(
-            "Send email[multipart '{}' and html '{}'] to '{}' with subject '{}' and content={}",
+            "Send email[multipart '{}' and html '{}'] to '{}' and content={}",
             isMultipart,
             isHtml,
             to,
-            subject,
             content
         );
     }

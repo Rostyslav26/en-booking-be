@@ -9,14 +9,14 @@ public class UserAlreadyExistsException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = -5832043203001950616L;
-    private final String reason;
+    private final String email;
 
-    public UserAlreadyExistsException(String login) {
-        super(String.format("User by %s already exists", login));
-        this.reason = login;
+    public UserAlreadyExistsException(String email) {
+        super(String.format("User %s already exists", email));
+        this.email = email;
     }
 
-    public String getReason() {
-        return reason;
+    public String getEmail() {
+        return email;
     }
 }

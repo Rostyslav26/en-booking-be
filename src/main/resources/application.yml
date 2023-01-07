@@ -67,3 +67,6 @@ error:
   handling:
     http-status-in-json-response: true
     search-super-class-hierarchy: true
+    messages:
+      java.sql.SQLException: 'Unexpected error'
+      java.sql.DataAccessException: 'Unexpected error'

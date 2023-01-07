@@ -28,10 +28,8 @@ public class UserMapperImpl implements UserMapper {
         user.setEmail(dto.getEmail());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
-        user.setImageUrl(dto.getImageUrl());
 
-        final String langKey = StringUtils.isEmpty(dto.getLangKey()) ? DEFAULT_LANG_KEY : dto.getLangKey();
-        user.setLangKey(langKey);
+        user.setLangKey(DEFAULT_LANG_KEY);
 
         user.setRoles(Collections.singleton(ROLE_USER));
         user.setActivated(false);

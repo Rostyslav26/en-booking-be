@@ -3,6 +3,10 @@ package com.website.enbookingbe.core.user.management.service;
 import com.website.enbookingbe.core.exception.NotFoundException;
 import com.website.enbookingbe.core.user.management.domain.User;
 import com.website.enbookingbe.core.user.management.exception.UserAlreadyExistsException;
+import com.website.enbookingbe.core.user.management.exception.UserNotFoundException;
+import com.website.enbookingbe.core.user.management.mapper.UserMapper;
+import com.website.enbookingbe.core.user.management.model.Person;
+import com.website.enbookingbe.core.user.management.model.UserProfile;
 import com.website.enbookingbe.core.user.management.repository.RoleRepository;
 import com.website.enbookingbe.core.user.management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final UserMapper userMapper;
 
     public User save(User user) {
         final String email = user.getEmail();
@@ -39,5 +44,11 @@ public class UserService {
         userRepository.update(user);
 
         log.debug("User '{}' has been activated", user.getEmail());
+    }
+
+    public UserProfile getProfile(String email) {
+        return userRepository.findByEmail(email)
+            .map(userMapper::toUserProfile)
+            .orElseThrow(() -> new UserNotFoundException(email));
     }
 }

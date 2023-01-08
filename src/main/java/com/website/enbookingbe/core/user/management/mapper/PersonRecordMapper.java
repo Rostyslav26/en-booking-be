@@ -16,7 +16,6 @@ public class PersonRecordMapper implements RecordMapper<Record, Person> {
         person.setFirstName(record.get(USER.FIRST_NAME));
         person.setLastName(record.get(USER.LAST_NAME));
         person.setImageUrl(record.get(USER.IMAGE_URL));
-        person.setEmail(record.get(USER.EMAIL));
 
         return person;
     }

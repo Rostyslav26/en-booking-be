@@ -40,6 +40,6 @@ public class FieldsHolder {
     public static List<? extends TableField<UserRecord, ? extends Serializable>> getPersonFields(@Nullable User userByAlias) {
         final User user = isNull(userByAlias) ? User.USER : userByAlias;
 
-        return List.of(user.ID, user.FIRST_NAME, user.LAST_NAME, user.EMAIL, user.IMAGE_URL, user.ACTIVATED);
+        return List.of(user.ID, user.FIRST_NAME, user.LAST_NAME, user.IMAGE_URL, user.ACTIVATED);
     }
 }

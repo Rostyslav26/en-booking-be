@@ -1,7 +1,9 @@
 package com.website.enbookingbe.core.user.management.mapper;
 
 import com.website.enbookingbe.core.user.management.domain.User;
+import com.website.enbookingbe.core.user.management.model.Person;
 import com.website.enbookingbe.core.user.management.model.RegistrationRequest;
+import com.website.enbookingbe.core.user.management.model.UserProfile;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,5 +40,18 @@ public class UserMapperImpl implements UserMapper {
         user.setActivationKey(generateActivationKey());
 
         return user;
+    }
+
+    @Override
+    public UserProfile toUserProfile(User user) {
+        final UserProfile userProfile = new UserProfile();
+
+        userProfile.setId(user.getId());
+        userProfile.setFirstName(user.getFirstName());
+        userProfile.setLastName(user.getLastName());
+        userProfile.setEmail(user.getEmail());
+        userProfile.setImageUrl(user.getImageUrl());
+
+        return userProfile;
     }
 }

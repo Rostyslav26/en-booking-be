@@ -22,7 +22,6 @@ import java.util.List;
 
 import static com.website.enbookingbe.core.security.jwt.JWTGrantedAuthoritiesConverter.AUTHORITIES_KEY;
 
-
 @Slf4j
 @Component
 public class JWTProvider {
@@ -45,7 +44,7 @@ public class JWTProvider {
 
         return Jwts.builder()
             .setSubject(authentication.getName())
-            .claim(AUTHORITIES_KEY, authorities)
+            .claim(AUTHORITIES_KEY, authorities) // add first and last name to token
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(createExpirationTokenDate(rememberMe))
             .compact();
@@ -70,20 +69,17 @@ public class JWTProvider {
             return true;
         } catch (SignatureException ex) {
             log.trace("Invalid JWT signature", ex);
-            throw ex;
         } catch (MalformedJwtException ex) {
             log.trace("Invalid JWT token", ex);
-            throw ex;
         } catch (ExpiredJwtException ex) {
             log.trace("Expired JWT token", ex);
-            throw ex;
         } catch (UnsupportedJwtException ex) {
             log.trace("Unsupported JWT token", ex);
-            throw ex;
         } catch (IllegalArgumentException ex) {
             log.trace("JWT claims string is empty.", ex);
-            throw ex;
         }
+
+        return false;
     }
 
     private Date createExpirationTokenDate(boolean rememberMe) {

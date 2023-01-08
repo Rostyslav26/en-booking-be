@@ -44,7 +44,7 @@ public class JWTProvider {
 
         return Jwts.builder()
             .setSubject(authentication.getName())
-            .claim(AUTHORITIES_KEY, authorities) // add first and last name to token
+            .claim(AUTHORITIES_KEY, authorities)
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(createExpirationTokenDate(rememberMe))
             .compact();

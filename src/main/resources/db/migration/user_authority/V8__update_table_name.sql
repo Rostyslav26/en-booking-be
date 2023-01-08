@@ -1,1 +1,0 @@
-ALTER TABLE user_authority RENAME TO user_role

@@ -76,7 +76,7 @@ public class UserRepository {
 
     private Field<Set<Role>> getRolesSelect() {
         return multiset(
-            select(USER_ROLE.AUTHORITY_ID.as(ROLE.ID))
+            select(USER_ROLE.ROLE_ID.as(ROLE.ID))
                 .from(USER_ROLE)
                 .where(USER_ROLE.USER_ID.eq(USER.ID)))
             .as("roles")

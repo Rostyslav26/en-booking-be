@@ -6,5 +6,4 @@ import com.website.enbookingbe.core.user.management.model.UserProfile;
 
 public interface UserMapper {
     User toNewUser(RegistrationRequest dto);
-    UserProfile toUserProfile(User user);
 }

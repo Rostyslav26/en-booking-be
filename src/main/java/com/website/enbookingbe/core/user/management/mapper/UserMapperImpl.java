@@ -41,17 +41,4 @@ public class UserMapperImpl implements UserMapper {
 
         return user;
     }
-
-    @Override
-    public UserProfile toUserProfile(User user) {
-        final UserProfile userProfile = new UserProfile();
-
-        userProfile.setId(user.getId());
-        userProfile.setFirstName(user.getFirstName());
-        userProfile.setLastName(user.getLastName());
-        userProfile.setEmail(user.getEmail());
-        userProfile.setImageUrl(user.getImageUrl());
-
-        return userProfile;
-    }
 }

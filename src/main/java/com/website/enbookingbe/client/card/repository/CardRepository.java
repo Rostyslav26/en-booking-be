@@ -2,6 +2,7 @@ package com.website.enbookingbe.client.card.repository;
 
 import com.website.enbookingbe.client.card.domain.Card;
 import com.website.enbookingbe.client.card.mapper.CardRecordMapper;
+import com.website.enbookingbe.core.utils.FieldsHolder;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.website.enbookingbe.core.utils.FieldsHolder.getPersonSelectRow;
 import static com.website.enbookingbe.data.jooq.Tables.USER;
 import static com.website.enbookingbe.data.jooq.Tables.USER_CARD;
 import static com.website.enbookingbe.data.jooq.tables.Card.CARD;
@@ -21,9 +21,7 @@ public class CardRepository {
     private final CardRecordMapper cardMapper = new CardRecordMapper();
 
     public Optional<Card> getById(Integer id) {
-        return dsl.select(
-                CARD,
-                getPersonSelectRow())
+        return dsl.select(CARD, FieldsHolder.getUserInfoSelectRow())
             .from(CARD)
             .join(USER).on(CARD.AUTHOR_ID.eq(USER.ID))
             .where(CARD.ID.eq(id))
@@ -31,9 +29,7 @@ public class CardRepository {
     }
 
     public List<Card> getFavoriteCards(Integer userId) {
-        return dsl.select(
-                CARD,
-                getPersonSelectRow())
+        return dsl.select(CARD, FieldsHolder.getUserInfoSelectRow())
             .from(CARD)
             .join(USER_CARD).on(CARD.ID.eq(USER_CARD.CARD_ID))
             .where(USER_CARD.USER_ID.eq(userId))

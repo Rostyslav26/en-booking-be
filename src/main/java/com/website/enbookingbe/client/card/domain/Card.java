@@ -1,6 +1,6 @@
 package com.website.enbookingbe.client.card.domain;
 
-import com.website.enbookingbe.core.user.management.model.Person;
+import com.website.enbookingbe.core.user.management.model.UserInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +14,7 @@ public class Card {
     private Integer id;
     private String question;
     private String answer;
-    private Person author;
+    private UserInfo author;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

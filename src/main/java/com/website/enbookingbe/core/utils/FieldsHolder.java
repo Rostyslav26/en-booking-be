@@ -1,7 +1,7 @@
 package com.website.enbookingbe.core.utils;
 
 import com.website.enbookingbe.core.user.management.mapper.PersonRecordMapper;
-import com.website.enbookingbe.core.user.management.model.Person;
+import com.website.enbookingbe.core.user.management.model.UserInfo;
 import com.website.enbookingbe.data.jooq.tables.User;
 import com.website.enbookingbe.data.jooq.tables.records.UserRecord;
 import org.jooq.SelectField;
@@ -21,23 +21,19 @@ public class FieldsHolder {
 
     FieldsHolder() { }
 
-    public static SelectField<Person> getPersonSelectRow() {
-        return getPersonSelectRow(null);
+    public static SelectField<UserInfo> getUserInfoSelectRow() {
+        return getUserInfoSelectRow(null);
     }
 
-    public static SelectField<Person> getPersonSelectRow(@Nullable User userByAlias) {
+    public static SelectField<UserInfo> getUserInfoSelectRow(@Nullable User userByAlias) {
         final User user = isNull(userByAlias) ? User.USER : userByAlias;
 
-        return row(getPersonFields(user))
-            .as("person")
+        return row(getUserInfoFields(user))
+            .as("user")
             .convertFrom(PERSON_RECORD_MAPPER);
     }
 
-    public static List<? extends TableField<UserRecord, ? extends Serializable>> getPersonFields() {
-        return getPersonFields(null);
-    }
-
-    public static List<? extends TableField<UserRecord, ? extends Serializable>> getPersonFields(@Nullable User userByAlias) {
+    public static List<? extends TableField<UserRecord, ? extends Serializable>> getUserInfoFields(@Nullable User userByAlias) {
         final User user = isNull(userByAlias) ? User.USER : userByAlias;
 
         return List.of(user.ID, user.FIRST_NAME, user.LAST_NAME, user.EMAIL, user.IMAGE_URL, user.ACTIVATED);

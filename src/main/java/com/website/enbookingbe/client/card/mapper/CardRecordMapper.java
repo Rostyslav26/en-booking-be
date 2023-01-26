@@ -1,7 +1,7 @@
 package com.website.enbookingbe.client.card.mapper;
 
 import com.website.enbookingbe.client.card.domain.Card;
-import com.website.enbookingbe.core.user.management.model.Person;
+import com.website.enbookingbe.core.user.management.model.UserInfo;
 import com.website.enbookingbe.data.jooq.tables.records.CardRecord;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -21,7 +21,7 @@ public class CardRecordMapper implements RecordMapper<Record, Card> {
         card.setCreatedAt(cardRecord.get(CARD.CREATED_AT));
         card.setUpdatedAt(cardRecord.get(CARD.UPDATED_AT));
 
-        final Person author = record.get("person", Person.class);
+        final UserInfo author = record.get("user", UserInfo.class);
         card.setAuthor(author);
 
         return card;

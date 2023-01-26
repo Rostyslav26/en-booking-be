@@ -4,6 +4,7 @@ import com.website.enbookingbe.core.user.management.domain.Role;
 import com.website.enbookingbe.core.user.management.domain.User;
 import com.website.enbookingbe.core.user.management.mapper.RoleRecordMapper;
 import com.website.enbookingbe.core.user.management.mapper.UserRecordMapper;
+import com.website.enbookingbe.core.user.management.model.UserProfile;
 import com.website.enbookingbe.data.jooq.tables.records.UserRecord;
 import lombok.RequiredArgsConstructor;
 import org.jooq.*;
@@ -66,23 +67,6 @@ public class UserRepository {
             });
     }
 
-    private <T> SelectConditionStep<Record2<UserRecord, Set<Role>>> findBy(TableField<UserRecord, T> field, T value) {
-        return dsl.select(
-                USER,
-                getRolesSelect())
-            .from(USER)
-            .where(field.eq(value));
-    }
-
-    private Field<Set<Role>> getRolesSelect() {
-        return multiset(
-            select(USER_ROLE.AUTHORITY_ID.as(ROLE.ID))
-                .from(USER_ROLE)
-                .where(USER_ROLE.USER_ID.eq(USER.ID)))
-            .as("roles")
-            .convertFrom(f -> f.intoSet(roleMapper));
-    }
-
     public void update(User user) {
         user.setLastModifiedDate(LocalDateTime.now());
 
@@ -99,5 +83,38 @@ public class UserRepository {
             .set(USER.RESET_KEY, user.getResetKey())
             .where(USER.ID.eq(user.getId()))
             .execute();
+    }
+
+    public Optional<UserProfile> findProfileByEmail(String email) {
+        return dsl.select(USER.ID, USER.EMAIL, USER.FIRST_NAME, USER.LAST_NAME, USER.IMAGE_URL)
+            .from(USER)
+            .where(USER.EMAIL.eq(email))
+            .fetchOptional(record -> {
+                final UserProfile userProfile = new UserProfile();
+                userProfile.setId(record.get(USER.ID));
+                userProfile.setEmail(record.get(USER.EMAIL));
+                userProfile.setFirstName(record.get(USER.FIRST_NAME));
+                userProfile.setLastName(record.get(USER.LAST_NAME));
+                userProfile.setImageUrl(record.get(USER.IMAGE_URL));
+
+                return userProfile;
+            });
+    }
+
+    private <T> SelectConditionStep<Record2<UserRecord, Set<Role>>> findBy(TableField<UserRecord, T> field, T value) {
+        return dsl.select(
+                USER,
+                getRolesSelect())
+            .from(USER)
+            .where(field.eq(value));
+    }
+
+    private Field<Set<Role>> getRolesSelect() {
+        return multiset(
+            select(USER_ROLE.ROLE_ID.as(ROLE.ID))
+                .from(USER_ROLE)
+                .where(USER_ROLE.USER_ID.eq(USER.ID)))
+            .as("roles")
+            .convertFrom(f -> f.intoSet(roleMapper));
     }
 }

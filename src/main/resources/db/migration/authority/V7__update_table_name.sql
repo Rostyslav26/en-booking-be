@@ -1,1 +1,0 @@
-ALTER TABLE authority RENAME TO role

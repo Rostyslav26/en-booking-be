@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class UserInfo {
     private Integer userId;
+    private String email;
     private String firstName;
     private String lastName;
     private String imageUrl;

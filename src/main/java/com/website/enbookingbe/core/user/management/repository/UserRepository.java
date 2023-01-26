@@ -4,7 +4,7 @@ import com.website.enbookingbe.core.user.management.domain.Role;
 import com.website.enbookingbe.core.user.management.domain.User;
 import com.website.enbookingbe.core.user.management.mapper.RoleRecordMapper;
 import com.website.enbookingbe.core.user.management.mapper.UserRecordMapper;
-import com.website.enbookingbe.core.user.management.model.UserProfile;
+import com.website.enbookingbe.core.user.management.model.UserInfo;
 import com.website.enbookingbe.data.jooq.tables.records.UserRecord;
 import lombok.RequiredArgsConstructor;
 import org.jooq.*;
@@ -42,69 +42,28 @@ public class UserRepository {
     }
 
     public void save(User user) {
-        user.setCreatedDate(LocalDateTime.now());
-        user.setLastModifiedDate(LocalDateTime.now());
-
-        dsl.insertInto(USER)
-            .set(USER.EMAIL, user.getEmail())
-            .set(USER.PASSWORD, user.getPassword())
-            .set(USER.FIRST_NAME, user.getFirstName())
-            .set(USER.LAST_NAME, user.getLastName())
-            .set(USER.IMAGE_URL, user.getImageUrl())
-            .set(USER.ACTIVATION_KEY, user.getActivationKey())
-            .set(USER.ACTIVATED, user.getActivated())
-            .set(USER.LANG_KEY, user.getLangKey())
-            .set(USER.CREATED_BY, user.getCreatedBy())
-            .set(USER.CREATED_DATE, user.getCreatedDate())
-            .set(USER.LAST_MODIFIED_BY, user.getLastModifiedBy())
-            .set(USER.LAST_MODIFIED_DATE, user.getLastModifiedDate())
-            .set(USER.RESET_DATE, user.getResetDate())
-            .set(USER.RESET_KEY, user.getResetKey())
-            .returning()
-            .fetchOptional()
-            .ifPresent(record -> {
-                user.setId(record.getId());
-            });
+        final UserRecord record = dsl.newRecord(USER, user);
+        record.store();
+        user.setId(record.getId());
     }
 
     public void update(User user) {
         user.setLastModifiedDate(LocalDateTime.now());
 
-        dsl.update(USER)
-            .set(USER.FIRST_NAME, user.getFirstName())
-            .set(USER.LAST_NAME, user.getLastName())
-            .set(USER.IMAGE_URL, user.getImageUrl())
-            .set(USER.ACTIVATION_KEY, user.getActivationKey())
-            .set(USER.ACTIVATED, user.getActivated())
-            .set(USER.LANG_KEY, user.getLangKey())
-            .set(USER.LAST_MODIFIED_BY, user.getLastModifiedBy())
-            .set(USER.LAST_MODIFIED_DATE, user.getLastModifiedDate())
-            .set(USER.RESET_DATE, user.getResetDate())
-            .set(USER.RESET_KEY, user.getResetKey())
-            .where(USER.ID.eq(user.getId()))
-            .execute();
+        dsl.newRecord(USER, user).update();
     }
 
-    public Optional<UserProfile> findProfileByEmail(String email) {
-        return dsl.select(USER.ID, USER.EMAIL, USER.FIRST_NAME, USER.LAST_NAME, USER.IMAGE_URL)
+    public Optional<UserInfo> getUserInfoByEmail(String email) {
+        return dsl.select(USER.ID.as("userId"), USER.EMAIL, USER.FIRST_NAME, USER.LAST_NAME, USER.IMAGE_URL)
             .from(USER)
             .where(USER.EMAIL.eq(email))
-            .fetchOptional(record -> {
-                final UserProfile userProfile = new UserProfile();
-                userProfile.setId(record.get(USER.ID));
-                userProfile.setEmail(record.get(USER.EMAIL));
-                userProfile.setFirstName(record.get(USER.FIRST_NAME));
-                userProfile.setLastName(record.get(USER.LAST_NAME));
-                userProfile.setImageUrl(record.get(USER.IMAGE_URL));
-
-                return userProfile;
-            });
+            .fetchOptionalInto(UserInfo.class);
     }
 
+
+    // TODO: 26.01.2023 maybe remove UserMapper and use dsl.into(User.class) instead
     private <T> SelectConditionStep<Record2<UserRecord, Set<Role>>> findBy(TableField<UserRecord, T> field, T value) {
-        return dsl.select(
-                USER,
-                getRolesSelect())
+        return dsl.select(USER, getRolesSelect())
             .from(USER)
             .where(field.eq(value));
     }

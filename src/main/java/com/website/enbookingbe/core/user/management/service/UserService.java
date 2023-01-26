@@ -4,7 +4,7 @@ import com.website.enbookingbe.core.exception.NotFoundException;
 import com.website.enbookingbe.core.user.management.domain.User;
 import com.website.enbookingbe.core.user.management.exception.UserAlreadyExistsException;
 import com.website.enbookingbe.core.user.management.exception.UserNotFoundException;
-import com.website.enbookingbe.core.user.management.model.UserProfile;
+import com.website.enbookingbe.core.user.management.model.UserInfo;
 import com.website.enbookingbe.core.user.management.repository.RoleRepository;
 import com.website.enbookingbe.core.user.management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +43,8 @@ public class UserService {
         log.debug("User '{}' has been activated", user.getEmail());
     }
 
-    public UserProfile getProfile(String email) {
-        return userRepository.findProfileByEmail(email)
+    public UserInfo getUserInfo(String email) {
+        return userRepository.getUserInfoByEmail(email)
             .orElseThrow(() -> new UserNotFoundException(email));
     }
 }

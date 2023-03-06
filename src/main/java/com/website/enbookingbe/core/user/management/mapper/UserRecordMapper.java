@@ -14,7 +14,8 @@ public class UserRecordMapper implements RecordMapper<Record2<UserRecord, Set<Ro
 
     @Override
     public User map(Record2<UserRecord, Set<Role>> record) {
-        final UserRecord userRecord = record.component1();
+        UserRecord userRecord = record.value1();
+        Set<Role> roles = record.value2();
 
         final User user = new User();
         user.setId(userRecord.get(USER.ID));
@@ -25,8 +26,7 @@ public class UserRecordMapper implements RecordMapper<Record2<UserRecord, Set<Ro
         user.setActivated(userRecord.get(USER.ACTIVATED));
         user.setActivationKey(userRecord.get(USER.ACTIVATION_KEY));
         user.setImageUrl(userRecord.get(USER.IMAGE_URL));
-
-        user.setRoles(record.component2());
+        user.setRoles(roles);
         user.setResetKey(userRecord.get(USER.RESET_KEY));
         user.setResetDate(userRecord.get(USER.RESET_DATE));
         user.setCreatedBy(userRecord.get(USER.CREATED_BY));

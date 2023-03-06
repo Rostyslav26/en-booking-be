@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.website.enbookingbe.data.jooq.tables.User.USER;
+
 @Service
 @Transactional
 @Slf4j
@@ -38,7 +40,7 @@ public class UserService {
 
         user.setActivated(true);
         user.setActivationKey(null);
-        userRepository.update(user);
+        userRepository.update(user, USER.ACTIVATED, USER.ACTIVATION_KEY);
 
         log.debug("User '{}' has been activated", user.getEmail());
     }

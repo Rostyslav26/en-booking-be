@@ -1,0 +1,1 @@
+ALTER TABLE quiz_card ADD COLUMN status VARCHAR(10);

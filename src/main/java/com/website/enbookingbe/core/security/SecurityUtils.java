@@ -1,10 +1,11 @@
 package com.website.enbookingbe.core.security;
 
+import com.website.enbookingbe.core.user.management.domain.User;
+import com.website.enbookingbe.core.user.management.exception.UserNotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.SecureRandom;
 import java.util.Optional;
@@ -25,10 +26,24 @@ public class SecurityUtils {
     private SecurityUtils() {
     }
 
-    public static Optional<String> getCurrentUserLogin() {
+    public static Optional<User> getCurrentUser() {
         final SecurityContext securityContext = SecurityContextHolder.getContext();
+        final Authentication authentication = securityContext.getAuthentication();
 
-        return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
+        if (isNull(authentication)) {
+            return Optional.empty();
+        }
+
+        final Object principal = authentication.getPrincipal();
+        if (principal instanceof User user) {
+            return Optional.of(user);
+        }
+
+        return Optional.empty();
+    }
+
+    public static User getCurrentUserOrThrow() {
+        return getCurrentUser().orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     public static String generateRandomAlphanumericString() {
@@ -45,20 +60,5 @@ public class SecurityUtils {
 
     public static String generateResetKey() {
         return generateRandomAlphanumericString();
-    }
-
-    private static String extractPrincipal(Authentication authentication) {
-        if (isNull(authentication)) {
-            return null;
-        }
-
-        final Object principal = authentication.getPrincipal();
-        if (principal instanceof UserDetails user) {
-            return user.getUsername();
-        } else if (principal instanceof String user) {
-            return user;
-        }
-
-        return null;
     }
 }

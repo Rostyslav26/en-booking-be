@@ -7,6 +7,7 @@ import com.website.enbookingbe.core.user.management.service.UserMailService;
 import com.website.enbookingbe.core.user.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +17,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
-public class UserRegistrationController {
+public class AccountController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final UserMailService userMailService;
@@ -37,5 +38,10 @@ public class UserRegistrationController {
         userService.activate(key);
 
         response.sendRedirect(websiteUrl + "/login");
+    }
+
+    @GetMapping("/me")
+    public User me(@AuthenticationPrincipal User user) {
+        return user;
     }
 }

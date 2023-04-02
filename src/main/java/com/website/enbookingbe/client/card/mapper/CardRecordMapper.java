@@ -1,29 +1,40 @@
 package com.website.enbookingbe.client.card.mapper;
 
 import com.website.enbookingbe.client.card.domain.Card;
-import com.website.enbookingbe.core.user.management.model.UserInfo;
 import com.website.enbookingbe.data.jooq.tables.records.CardRecord;
-import org.jooq.Record;
 import org.jooq.RecordMapper;
+import org.jooq.RecordUnmapper;
+import org.jooq.exception.MappingException;
 
-import static com.website.enbookingbe.data.jooq.tables.Card.CARD;
-
-public class CardRecordMapper implements RecordMapper<Record, Card> {
+public class CardRecordMapper implements RecordMapper<CardRecord, Card>, RecordUnmapper<Card, CardRecord> {
 
     @Override
-    public Card map(Record record) {
-        final CardRecord cardRecord = record.get(CARD.getName(), CardRecord.class);
-
+    public Card map(CardRecord record) {
         final Card card = new Card();
-        card.setId(cardRecord.get(CARD.ID));
-        card.setQuestion(cardRecord.get(CARD.QUESTION));
-        card.setAnswer(cardRecord.get(CARD.ANSWER));
-        card.setCreatedAt(cardRecord.get(CARD.CREATED_AT));
-        card.setUpdatedAt(cardRecord.get(CARD.UPDATED_AT));
-
-        final UserInfo author = record.get("user", UserInfo.class);
-        card.setAuthor(author);
+        card.setId(record.getId());
+        card.setQuestion(record.getQuestion());
+        card.setAnswer(record.getAnswer());
+        card.setAuthorId(record.getAuthorId());
+        card.setCreatedAt(record.getCreatedAt());
+        card.setUpdatedAt(record.getUpdatedAt());
+        card.setFavorite(record.getFavorite());
+        card.setLearned(record.getCompleted());
 
         return card;
+    }
+
+    @Override
+    public CardRecord unmap(Card card) throws MappingException {
+        final CardRecord target = new CardRecord();
+        target.setId(card.getId());
+        target.setAuthorId(card.getAuthorId());
+        target.setQuestion(card.getQuestion());
+        target.setAnswer(card.getAnswer());
+        target.setCreatedAt(card.getCreatedAt());
+        target.setUpdatedAt(card.getUpdatedAt());
+        target.setFavorite(card.isFavorite());
+        target.setCompleted(card.isLearned());
+
+        return target;
     }
 }

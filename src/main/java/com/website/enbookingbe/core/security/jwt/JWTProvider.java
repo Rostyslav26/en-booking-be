@@ -1,5 +1,8 @@
 package com.website.enbookingbe.core.security.jwt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.website.enbookingbe.core.user.management.domain.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -9,18 +12,11 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.security.Key;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-
-import static com.website.enbookingbe.core.security.jwt.JWTGrantedAuthoritiesConverter.AUTHORITIES_KEY;
 
 @Slf4j
 @Component
@@ -29,37 +25,50 @@ public class JWTProvider {
     // Token is valid 24 hours
     private static final long tokenValidityInMilliseconds = 86400L * 1000;
     private static final long tokenValidityInMillisecondsForRememberMe = 2592000L * 1000;
+    private static final String USER = "user";
 
     private final Key key;
     private final JwtParser jwtParser;
+    private final ObjectMapper objectMapper;
 
-    public JWTProvider(@Value("${website.security.authentication.jwt.base64-secret}") String base64Secret) {
+    public JWTProvider(
+        @Value("${website.security.authentication.jwt.base64-secret}") String base64Secret,
+        ObjectMapper objectMapper
+    ) {
+        this.objectMapper = objectMapper;
         final byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
     }
 
     public String createToken(@NotNull Authentication authentication, boolean rememberMe) {
-        final List<String> authorities = JWTGrantedAuthoritiesConverter.convert(authentication.getAuthorities());
+        final User user = (User) authentication.getPrincipal();
+        user.setPassword(Strings.EMPTY);
 
-        return Jwts.builder()
-            .setSubject(authentication.getName())
-            .claim(AUTHORITIES_KEY, authorities)
-            .signWith(key, SignatureAlgorithm.HS512)
-            .setExpiration(createExpirationTokenDate(rememberMe))
-            .compact();
+        try {
+            final String userJson = objectMapper.writeValueAsString(user);
+
+            return Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim("user", userJson)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(createExpirationTokenDate(rememberMe))
+                .compact();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error while creating token", e);
+        }
     }
 
     public Authentication getAuthentication(String token) {
         final Claims claims = jwtParser.parseClaimsJws(token).getBody();
+        final String userJson = claims.get(USER, String.class);
 
-        final Collection<? extends GrantedAuthority> authorities = JWTGrantedAuthoritiesConverter.convert(claims);
-        final UserDetails user = User.withUsername(claims.getSubject())
-            .password(Strings.EMPTY)
-            .authorities(authorities)
-            .build();
-
-        return new UsernamePasswordAuthenticationToken(user, token, authorities);
+        try {
+            final User user = objectMapper.readValue(userJson, User.class);
+            return new UsernamePasswordAuthenticationToken(user, token, user.getAuthorities());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error while parsing token", e);
+        }
     }
 
     public boolean validateToken(final String token) {

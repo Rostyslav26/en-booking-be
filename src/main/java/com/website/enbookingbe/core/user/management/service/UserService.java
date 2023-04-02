@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
 import static com.website.enbookingbe.data.jooq.tables.User.USER;
 
 @Service
@@ -40,13 +42,13 @@ public class UserService {
 
         user.setActivated(true);
         user.setActivationKey(null);
-        userRepository.update(user, USER.ACTIVATED, USER.ACTIVATION_KEY);
+        userRepository.update(user, Set.of(USER.ACTIVATED, USER.ACTIVATION_KEY));
 
         log.debug("User '{}' has been activated", user.getEmail());
     }
 
-    public UserInfo getUserInfo(String email) {
-        return userRepository.getUserInfoByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException(email));
+    public UserInfo getUserInfo(Integer id) {
+        return userRepository.getUserInfoById(id)
+            .orElseThrow(UserNotFoundException::new);
     }
 }

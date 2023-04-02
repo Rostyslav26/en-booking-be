@@ -1,10 +1,12 @@
 package com.website.enbookingbe.core.security.config;
 
+import com.website.enbookingbe.core.security.DomainUserDetailsService;
 import com.website.enbookingbe.core.security.jwt.JWTConfigurer;
 import com.website.enbookingbe.core.security.jwt.JWTProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -23,10 +25,18 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final JWTProvider tokenProvider;
     private final CorsFilter corsFilter;
+    private final DomainUserDetailsService userDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+            .userDetailsService(userDetailsService)
+            .passwordEncoder(passwordEncoder());
     }
 
     @Override

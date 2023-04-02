@@ -69,14 +69,3 @@ website:
   http:
     cache: # Used by the CachingHttpHeadersFilter
       timeToLiveInDays: 1461
-
-error:
-  handling:
-    http-status-in-json-response: true
-    search-super-class-hierarchy: true
-    messages:
-      java.lang.Throwable: 'Internal Server Error'
-      java.sql.SQLException: 'Internal Server Error'
-      java.sql.DataAccessException: 'Internal Server Error'
-    http-statuses:
-      io.jsonwebtoken.ExpiredJwtException: 'UNAUTHORIZED'

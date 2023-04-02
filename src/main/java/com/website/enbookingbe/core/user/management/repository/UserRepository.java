@@ -1,38 +1,30 @@
 package com.website.enbookingbe.core.user.management.repository;
 
+import com.google.common.collect.ImmutableSet;
 import com.website.enbookingbe.core.repository.UpdatableRepository;
-import com.website.enbookingbe.core.user.management.domain.Role;
 import com.website.enbookingbe.core.user.management.domain.User;
-import com.website.enbookingbe.core.user.management.mapper.RoleRecordMapper;
 import com.website.enbookingbe.core.user.management.mapper.UserRecordMapper;
-import com.website.enbookingbe.core.user.management.mapper.UserRecordUnmapper;
 import com.website.enbookingbe.core.user.management.model.UserInfo;
+import com.website.enbookingbe.core.utils.FieldsHolder;
 import com.website.enbookingbe.data.jooq.tables.records.UserRecord;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Record;
 import org.jooq.*;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.website.enbookingbe.data.jooq.Tables.ROLE;
 import static com.website.enbookingbe.data.jooq.tables.User.USER;
-import static com.website.enbookingbe.data.jooq.tables.UserRole.USER_ROLE;
-import static org.apache.commons.lang3.ArrayUtils.isEmpty;
-import static org.jooq.impl.DSL.multiset;
-import static org.jooq.impl.DSL.select;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Repository
 @RequiredArgsConstructor
 public class UserRepository implements UpdatableRepository<User, UserRecord> {
     private final DSLContext dsl;
 
-    private final RoleRecordMapper roleMapper = new RoleRecordMapper();
     private final UserRecordMapper userMapper = new UserRecordMapper();
-    private final UserRecordUnmapper userUnmapper = new UserRecordUnmapper();
 
     public boolean existsByEmail(String email) {
         return dsl.fetchExists(USER, USER.EMAIL.eq(email));
@@ -48,30 +40,34 @@ public class UserRepository implements UpdatableRepository<User, UserRecord> {
             .fetchOptional(userMapper);
     }
 
-    @SafeVarargs
-    public final void update(User user, TableField<UserRecord, ?>... fields) {
+    public User update(User user, Set<TableField<UserRecord, ?>> fields) {
         user.setLastModifiedDate(LocalDateTime.now());
-        final UserRecord record = dsl.newRecord(USER, userUnmapper.unmap(user));
+        final UserRecord record = dsl.newRecord(USER, userMapper.unmap(user));
 
         if (isEmpty(fields)) {
             record.update();
         } else {
-            final Set<Field<?>> data = new HashSet<>(Arrays.asList(fields));
-            data.add(USER.LAST_MODIFIED_DATE);
+            final Set<Field<?>> data = ImmutableSet.<Field<?>>builder()
+                .addAll(fields)
+                .add(USER.LAST_MODIFIED_DATE)
+                .build();
+
             record.update(data);
         }
+
+        return user;
     }
 
     public void save(User user) {
-        final UserRecord record = dsl.newRecord(USER, userUnmapper.unmap(user));
+        final UserRecord record = dsl.newRecord(USER, userMapper.unmap(user));
         record.store();
         user.setId(record.getId());
     }
 
-    public Optional<UserInfo> getUserInfoByEmail(String email) {
+    public Optional<UserInfo> getUserInfoById(Integer id) {
         return dsl.select(USER.ID, USER.EMAIL, USER.FIRST_NAME, USER.LAST_NAME, USER.IMAGE_URL)
             .from(USER)
-            .where(USER.EMAIL.eq(email))
+            .where(USER.ID.eq(id))
             .fetchOptional(r -> {
                 final UserInfo userInfo = new UserInfo();
                 userInfo.setUserId(r.get(USER.ID));
@@ -84,18 +80,10 @@ public class UserRepository implements UpdatableRepository<User, UserRecord> {
             });
     }
 
-    private <T> SelectConditionStep<Record2<UserRecord, Set<Role>>> findBy(TableField<UserRecord, T> field, T value) {
-        return dsl.select(USER, getRolesSelect())
+    private <T> SelectConditionStep<Record> findBy(TableField<UserRecord, T> field, T value) {
+        return dsl.select(USER.fields())
+            .select(FieldsHolder.USER_ROLES)
             .from(USER)
             .where(field.eq(value));
-    }
-
-    private Field<Set<Role>> getRolesSelect() {
-        return multiset(
-            select(USER_ROLE.ROLE_ID.as(ROLE.ID))
-                .from(USER_ROLE)
-                .where(USER_ROLE.USER_ID.eq(USER.ID)))
-            .as("roles")
-            .convertFrom(f -> f.intoSet(roleMapper));
     }
 }

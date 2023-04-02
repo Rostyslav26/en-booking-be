@@ -1,41 +1,35 @@
 package com.website.enbookingbe.core.utils;
 
-import com.website.enbookingbe.core.user.management.mapper.PersonRecordMapper;
-import com.website.enbookingbe.core.user.management.model.UserInfo;
-import com.website.enbookingbe.data.jooq.tables.User;
-import com.website.enbookingbe.data.jooq.tables.records.UserRecord;
-import org.jooq.SelectField;
-import org.jooq.TableField;
+import com.website.enbookingbe.core.user.management.domain.Role;
+import com.website.enbookingbe.core.user.management.mapper.RoleRecordMapper;
+import org.jooq.Field;
 
-import javax.annotation.Nullable;
+import java.util.Set;
 
-import java.io.Serializable;
-import java.util.List;
-
-import static java.util.Objects.isNull;
-import static org.jooq.impl.DSL.row;
+import static com.website.enbookingbe.data.jooq.Tables.ROLE;
+import static com.website.enbookingbe.data.jooq.tables.User.USER;
+import static com.website.enbookingbe.data.jooq.tables.UserRole.USER_ROLE;
+import static org.jooq.impl.DSL.multiset;
+import static org.jooq.impl.DSL.select;
 
 public class FieldsHolder {
+    private static final RoleRecordMapper roleMapper = new RoleRecordMapper();
 
-    private static final PersonRecordMapper PERSON_RECORD_MAPPER = new PersonRecordMapper();
+    public static final Field<Set<Role>> USER_ROLES;
 
-    FieldsHolder() { }
-
-    public static SelectField<UserInfo> getUserInfoSelectRow() {
-        return getUserInfoSelectRow(null);
+    static {
+        USER_ROLES = getUserRolesField();
     }
 
-    public static SelectField<UserInfo> getUserInfoSelectRow(@Nullable User userByAlias) {
-        final User user = isNull(userByAlias) ? User.USER : userByAlias;
-
-        return row(getUserInfoFields(user))
-            .as("user")
-            .convertFrom(PERSON_RECORD_MAPPER);
+    private FieldsHolder() {
     }
 
-    public static List<? extends TableField<UserRecord, ? extends Serializable>> getUserInfoFields(@Nullable User userByAlias) {
-        final User user = isNull(userByAlias) ? User.USER : userByAlias;
-
-        return List.of(user.ID, user.FIRST_NAME, user.LAST_NAME, user.IMAGE_URL, user.ACTIVATED);
+    private static Field<Set<Role>> getUserRolesField() {
+        return multiset(
+            select(USER_ROLE.ROLE_ID.as(ROLE.ID))
+                .from(USER_ROLE)
+                .where(USER_ROLE.USER_ID.eq(USER.ID)))
+            .as("roles")
+            .convertFrom(f -> f.intoSet(roleMapper));
     }
 }

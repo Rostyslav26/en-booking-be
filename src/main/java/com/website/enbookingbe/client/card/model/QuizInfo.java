@@ -1,7 +1,6 @@
 package com.website.enbookingbe.client.card.model;
 
-
-import com.website.enbookingbe.client.card.domain.Card;
+import com.website.enbookingbe.client.card.entity.Card;
 
 import java.util.List;
 import java.util.Map;

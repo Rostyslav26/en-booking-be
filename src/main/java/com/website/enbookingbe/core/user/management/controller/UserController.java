@@ -1,6 +1,7 @@
 package com.website.enbookingbe.core.user.management.controller;
 
-import com.website.enbookingbe.client.card.domain.Card;
+import com.website.enbookingbe.client.card.mapper.CardMapper;
+import com.website.enbookingbe.client.card.resource.CardResource;
 import com.website.enbookingbe.client.card.service.CardService;
 import com.website.enbookingbe.core.user.management.model.UserInfo;
 import com.website.enbookingbe.core.user.management.service.UserService;
@@ -18,6 +19,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final CardService cardService;
+    private final CardMapper cardMapper = new CardMapper();
 
     @GetMapping("/{id}")
     public UserInfo userInfo(@PathVariable Integer id) {
@@ -25,7 +27,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}/cards")
-    public List<Card> userCards(@PathVariable Integer id) {
-        return cardService.getByUserId(id);
+    public List<CardResource> userCards(@PathVariable Integer id) {
+        return cardService.getByUserId(id).stream()
+            .map(cardMapper::toResource)
+            .toList();
     }
 }

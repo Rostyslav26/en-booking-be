@@ -1,80 +1,88 @@
 package com.website.enbookingbe.client.card.service;
 
-import com.website.enbookingbe.client.card.domain.Card;
+import com.website.enbookingbe.client.card.entity.Card;
+import com.website.enbookingbe.client.card.entity.UserCard;
+import com.website.enbookingbe.client.card.entity.UserCardId;
 import com.website.enbookingbe.client.card.exception.CardNotFoundException;
-import com.website.enbookingbe.client.card.model.request.CreateCardRequest;
-import com.website.enbookingbe.client.card.model.request.UpdateCardRequest;
+import com.website.enbookingbe.client.card.resource.CreateCardResource;
+import com.website.enbookingbe.client.card.resource.UpdateCardResource;
 import com.website.enbookingbe.client.card.repository.CardRepository;
 import com.website.enbookingbe.client.card.repository.UserCardRepository;
+import com.website.enbookingbe.core.user.management.entity.*;
+import com.website.enbookingbe.core.user.management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static com.website.enbookingbe.data.jooq.tables.Card.CARD;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class CardService {
     private final CardRepository cardRepository;
+    private final UserRepository userRepository;
     private final UserCardRepository userCardRepository;
 
-    public Card create(CreateCardRequest dto, Integer userId) {
-        final Card card = prepareCard(dto.getQuestion(), dto.getAnswer(), userId);
-        final Card savedCard = cardRepository.save(card);
-        userCardRepository.save(savedCard.getId(), userId);
+    public Card create(CreateCardResource dto, Integer userId) {
+        final User user = userRepository.findById(userId).orElseThrow();
+        final Card card = createNewCard(dto.question(), dto.answer());
+        user.addCard(card);
 
-        return savedCard;
+        return card;
     }
 
-    public Card addToUserCollection(Integer cardId, Integer userId) {
+    public void addToUserCollection(Integer cardId, Integer userId) {
+        final User user = userRepository.findById(userId).orElseThrow();
         final Card card = cardRepository.findById(cardId).orElseThrow(() -> new CardNotFoundException(cardId));
-        Card newCard = prepareCard(card.getQuestion(), card.getAnswer(), card.getAuthorId());
 
-        newCard = cardRepository.save(newCard);
-        userCardRepository.save(newCard.getId(), userId);
-
-        return newCard;
+        user.addToCardCollection(card);
     }
 
     public void deleteFromUserCollection(Integer cardId, Integer userId) {
-        userCardRepository.removeById(cardId, userId);
+        final UserCardId userCardId = new UserCardId(userId, cardId);
+        userCardRepository.deleteById(userCardId);
     }
 
-    public Card update(UpdateCardRequest dto, Integer userId) {
-        final Card card = userCardRepository.findOne(userId, dto.getId()).orElseThrow(() -> new CardNotFoundException(dto.getId()));
-        card.setAnswer(dto.getAnswer());
-        card.setQuestion(dto.getQuestion());
+    public Card update(UpdateCardResource dto, Integer userId) {
+        final UserCard userCard = getUserCard(dto.id(), userId);
 
-        return cardRepository.update(card, Set.of(CARD.QUESTION, CARD.ANSWER));
+        final Card card = userCard.getCard();
+        card.setAnswer(dto.answer());
+        card.setQuestion(dto.question());
+
+        return card;
     }
 
     public void markAsFavorite(Integer cardId, boolean favorite, Integer userId) {
-        final Card card = userCardRepository.findOne(userId, cardId).orElseThrow(() -> new CardNotFoundException(cardId));
-        card.setFavorite(favorite);
+        final UserCard userCard = getUserCard(cardId, userId);
 
-        cardRepository.update(card, Set.of(CARD.FAVORITE));
+        userCard.setFavorite(favorite);
     }
 
     public void markAsLearned(Integer cardId, boolean learned, Integer userId) {
-        final Card card = userCardRepository.findOne(userId, cardId).orElseThrow(() -> new CardNotFoundException(cardId));
-        card.setLearned(learned);
+        final UserCard userCard = getUserCard(cardId, userId);
 
-        cardRepository.update(card);
+        userCard.setLearned(learned);
     }
 
     @Transactional(readOnly = true)
     public List<Card> getNotLearnedByUserId(Integer userId, Integer limit) {
-        return userCardRepository.findNotLearned(userId, limit);
+        final PageRequest pageRequest = PageRequest.ofSize(limit);
+
+        return userCardRepository.findNotLearnedByUserId(userId, pageRequest).stream()
+            .map(UserCard::getCard)
+            .toList();
     }
 
     @Transactional(readOnly = true)
     public List<Card> getByUserId(Integer userId) {
-        return userCardRepository.findAll(userId);
+        return userCardRepository.findByUserId(userId).stream()
+            .map(UserCard::getCard)
+            .toList();
     }
 
     @Transactional(readOnly = true)
@@ -84,15 +92,26 @@ public class CardService {
 
     @Transactional(readOnly = true)
     public List<Card> getByIds(List<Integer> ids) {
-        return cardRepository.findByIds(ids);
+        return cardRepository.findAllById(ids);
     }
 
-    private Card prepareCard(String question, String answer, Integer authorId) {
+    @Transactional(readOnly = true)
+    public List<Card> getUserCards(Integer userId, List<Integer> cardIds) {
+        return userCardRepository.findByUserIdAndCardIdIn(userId, cardIds).stream()
+            .map(UserCard::getCard)
+            .toList();
+    }
+
+    private Card createNewCard(String question, String answer) {
         final Card card = new Card();
         card.setQuestion(question);
         card.setAnswer(answer);
-        card.setAuthorId(authorId);
 
         return card;
+    }
+
+    private UserCard getUserCard(Integer cardId, Integer userId) {
+        final UserCardId userCardId = new UserCardId(userId, cardId);
+        return userCardRepository.findById(userCardId).orElseThrow(() -> new CardNotFoundException(cardId));
     }
 }

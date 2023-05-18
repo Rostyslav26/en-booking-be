@@ -1,6 +1,6 @@
 package com.website.enbookingbe.core.security;
 
-import com.website.enbookingbe.core.user.management.domain.User;
+import com.website.enbookingbe.core.user.management.entity.User;
 import com.website.enbookingbe.core.user.management.exception.UserNotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.core.Authentication;

@@ -1,25 +1,13 @@
 package com.website.enbookingbe.client.card.repository;
 
-import com.website.enbookingbe.client.card.domain.QuizCard;
+import com.website.enbookingbe.client.card.entity.QuizCard;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
 import java.util.Optional;
 
-public class QuizCardRepository {
+public interface QuizCardRepository extends JpaRepository<QuizCard, Integer> {
 
-    public void saveAll(List<QuizCard> quizCards) {
-
-    }
-
-    public void update(List<QuizCard> quizCards) {
-
-    }
-
-    public void update(QuizCard quizCard) {
-
-    }
-
-    public Optional<QuizCard> findByIdAndCardId(Integer quizId, Integer cardId) {
-        return null;
-    }
+    @Query("select qc from QuizCard qc join fetch qc.quiz q join fetch qc.card c where q.id = ?1 and c.id = ?2")
+    Optional<QuizCard> findByQuizIdAndCardId(Integer quizId, Integer cardId);
 }

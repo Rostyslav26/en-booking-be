@@ -16,7 +16,7 @@ public class PromptGenerator {
     private final Random random = new Random();
 
     public String generatePrompt(final String answer) {
-        final List<String> words = new ArrayList<>(Arrays.asList(StringUtils.split(answer, " ")));
+        final List<String> words = Arrays.asList(StringUtils.split(answer, " "));
 
         for (int i = 0; i < words.size(); i++) {
             final String word = words.get(i);

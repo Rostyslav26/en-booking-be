@@ -1,16 +1,17 @@
 package com.website.enbookingbe.core.user.management.mapper;
 
-import com.website.enbookingbe.core.user.management.domain.User;
+import com.website.enbookingbe.core.user.management.entity.Role;
+import com.website.enbookingbe.core.user.management.entity.User;
 import com.website.enbookingbe.core.user.management.model.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.time.Instant;
 
 import static com.website.enbookingbe.core.security.SecurityUtils.DEFAULT_AUDITING;
 import static com.website.enbookingbe.core.security.SecurityUtils.generateActivationKey;
-import static com.website.enbookingbe.core.user.management.domain.Role.ROLE_USER;
+import static com.website.enbookingbe.core.security.SpringRole.ROLE_USER;
 
 @Component
 @RequiredArgsConstructor
@@ -30,10 +31,12 @@ public class UserMapperImpl implements UserMapper {
 
         user.setLangKey(DEFAULT_LANG_KEY);
 
-        user.setRoles(Collections.singleton(ROLE_USER));
+        user.addRole(new Role(ROLE_USER.name()));
         user.setActivated(false);
         user.setCreatedBy(DEFAULT_AUDITING);
+        user.setCreatedDate(Instant.now());
         user.setLastModifiedBy(DEFAULT_AUDITING);
+        user.setLastModifiedDate(Instant.now());
         user.setActivationKey(generateActivationKey());
 
         return user;

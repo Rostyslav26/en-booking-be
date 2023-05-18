@@ -1,1 +1,0 @@
-ALTER TABLE card RENAME COLUMN completed TO learned;

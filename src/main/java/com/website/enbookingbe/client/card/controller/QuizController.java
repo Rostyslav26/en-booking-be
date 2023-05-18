@@ -1,10 +1,12 @@
 package com.website.enbookingbe.client.card.controller;
 
-import com.website.enbookingbe.client.card.domain.Quiz;
+import com.website.enbookingbe.client.card.entity.Quiz;
+import com.website.enbookingbe.client.card.mapper.QuizMapper;
 import com.website.enbookingbe.client.card.model.QuizCardModel;
 import com.website.enbookingbe.client.card.model.QuizInfo;
+import com.website.enbookingbe.client.card.resource.QuizResource;
 import com.website.enbookingbe.client.card.service.QuizService;
-import com.website.enbookingbe.core.user.management.domain.User;
+import com.website.enbookingbe.core.user.management.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +19,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuizController {
     private final QuizService quizService;
+    private final QuizMapper quizMapper = new QuizMapper();
 
     @PostMapping
-    public Quiz createQuiz(@RequestBody List<Integer> cardIds, @AuthenticationPrincipal User user) {
-        return quizService.createQuiz(cardIds, user.getId());
+    public QuizResource createQuiz(@RequestBody List<Integer> cardIds, @AuthenticationPrincipal User user) {
+        final Quiz quiz = quizService.createQuiz(cardIds, user);
+
+        return quizMapper.toResource(quiz, user.getId());
     }
 
     @PostMapping("/not-learned")
-    public Quiz createQuizByNotLearnedCards(@Nullable @RequestParam Integer limit, @AuthenticationPrincipal User user) {
-        return quizService.createQuizByNotLearnedCards(user.getId(), limit);
+    public QuizResource createQuizByNotLearnedCards(@Nullable @RequestParam Integer limit, @AuthenticationPrincipal User user) {
+        Quiz quiz = quizService.createQuizByNotLearnedCards(user, limit);
+
+        return quizMapper.toResource(quiz, user.getId());
     }
 
     @GetMapping("/{quizId}")

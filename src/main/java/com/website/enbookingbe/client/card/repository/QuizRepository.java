@@ -1,32 +1,19 @@
 package com.website.enbookingbe.client.card.repository;
 
-import com.website.enbookingbe.client.card.domain.Quiz;
-import com.website.enbookingbe.client.card.model.QuizSummaryInfo;
-import lombok.RequiredArgsConstructor;
-import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
+import com.website.enbookingbe.client.card.entity.Quiz;
+import com.website.enbookingbe.client.card.model.QuizStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
 import java.util.Optional;
 
-@Repository
-@RequiredArgsConstructor
-public class QuizRepository {
-    private final DSLContext dslContext;
+public interface QuizRepository extends JpaRepository<Quiz, Integer> {
 
-    public Quiz save(Quiz quiz) {
-        return null;
-    }
+    @Query("select q from Quiz q join fetch q.quizCards WHERE q.id = ?1 and q.user.id = ?2")
+    Optional<Quiz> findByIdAndAndUserId(Integer quizId, Integer userId);
 
-    public Optional<Quiz> findByIdAndUserId(Integer quizId, Integer userId) {
-        return Optional.empty();
-    }
+    @Query("select (count(q) > 0) from Quiz q where q.id = ?1 and q.status = ?2 and q.user.id = ?3")
+    boolean isQuizHasStatus(Integer quizId, QuizStatus status, Integer userId);
 
-    public void update(Quiz quiz) {
-
-    }
-
-    public List<QuizSummaryInfo> findQuizSummaryInfoByUserId(Integer userId) {
-        return null;
-    }
+    boolean existsByIdAndUserId(Integer quizId, Integer userId);
 }

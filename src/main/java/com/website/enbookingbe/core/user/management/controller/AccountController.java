@@ -1,6 +1,7 @@
 package com.website.enbookingbe.core.user.management.controller;
 
-import com.website.enbookingbe.core.user.management.domain.User;
+import com.website.enbookingbe.core.security.Principal;
+import com.website.enbookingbe.core.user.management.entity.User;
 import com.website.enbookingbe.core.user.management.mapper.UserMapper;
 import com.website.enbookingbe.core.user.management.model.RegistrationRequest;
 import com.website.enbookingbe.core.user.management.service.UserMailService;
@@ -41,7 +42,7 @@ public class AccountController {
     }
 
     @GetMapping("/me")
-    public User me(@AuthenticationPrincipal User user) {
-        return user;
+    public Principal me(@AuthenticationPrincipal Principal principal) {
+        return principal;
     }
 }

@@ -1,11 +1,14 @@
 package com.website.enbookingbe.client.card.controller;
 
-import com.website.enbookingbe.client.card.domain.Card;
+import com.website.enbookingbe.client.card.entity.Card;
 import com.website.enbookingbe.client.card.exception.CardNotFoundException;
-import com.website.enbookingbe.client.card.model.request.CreateCardRequest;
-import com.website.enbookingbe.client.card.model.request.UpdateCardRequest;
+import com.website.enbookingbe.client.card.mapper.CardMapper;
+import com.website.enbookingbe.client.card.resource.CardResource;
+import com.website.enbookingbe.client.card.resource.CreateCardResource;
+import com.website.enbookingbe.client.card.resource.UpdateCardResource;
 import com.website.enbookingbe.client.card.service.CardService;
-import com.website.enbookingbe.core.user.management.domain.User;
+import com.website.enbookingbe.core.security.Principal;
+import com.website.enbookingbe.core.user.management.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,25 +20,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardController {
     private final CardService cardService;
+    private final CardMapper cardMapper = new CardMapper();
 
     @GetMapping("/my")
-    public List<Card> myCards(@AuthenticationPrincipal User user) {
-        return cardService.getByUserId(user.getId());
+    public List<CardResource> myCards(@AuthenticationPrincipal Principal principal) {
+        return cardService.getByUserId(principal.getId()).stream()
+            .map(cardMapper::toResource)
+            .toList();
     }
 
-    @PutMapping("/my/{id}")
-    public Card update(@RequestBody UpdateCardRequest dto, @AuthenticationPrincipal User user) {
-        return cardService.update(dto, user.getId());
+    @PutMapping("/my")
+    public CardResource update(@RequestBody UpdateCardResource dto, @AuthenticationPrincipal User user) {
+        final Card card = cardService.update(dto, user.getId());
+
+        return cardMapper.toResource(card);
     }
 
     @PostMapping("/my")
-    public Card create(@RequestBody CreateCardRequest dto, @AuthenticationPrincipal User user) {
-        return cardService.create(dto, user.getId());
+    public CardResource create(@RequestBody CreateCardResource dto, @AuthenticationPrincipal User user) {
+        final Card card = cardService.create(dto, user.getId());
+
+        return cardMapper.toResource(card);
     }
 
     @GetMapping("/my/not-learned")
-    public List<Card> notLearnedCards(@RequestParam(required = false) Integer limit, @AuthenticationPrincipal User user) {
-        return cardService.getNotLearnedByUserId(user.getId(), limit);
+    public List<CardResource> notLearnedCards(@RequestParam(required = false) Integer limit, @AuthenticationPrincipal User user) {
+        return cardService.getNotLearnedByUserId(user.getId(), limit).stream()
+            .map(cardMapper::toResource)
+            .toList();
     }
 
     @DeleteMapping("/my/{id}")
@@ -44,8 +56,8 @@ public class CardController {
     }
 
     @PostMapping("/{id}/add-to-my-collection")
-    public Card addToUserCollection(@PathVariable Integer id, @AuthenticationPrincipal User user) {
-        return cardService.addToUserCollection(id, user.getId());
+    public void addToUserCollection(@PathVariable Integer id, @AuthenticationPrincipal User user) {
+        cardService.addToUserCollection(id, user.getId());
     }
 
     @PostMapping("/my/favorites/{id}")
@@ -54,7 +66,9 @@ public class CardController {
     }
 
     @GetMapping("/{id}")
-    public Card cardById(@PathVariable Integer id) {
-        return cardService.getById(id).orElseThrow(() -> new CardNotFoundException(id));
+    public CardResource cardById(@PathVariable Integer id) {
+        return cardService.getById(id)
+            .map(cardMapper::toResource)
+            .orElseThrow(() -> new CardNotFoundException(id));
     }
 }

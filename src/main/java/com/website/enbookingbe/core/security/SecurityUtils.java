@@ -1,6 +1,5 @@
 package com.website.enbookingbe.core.security;
 
-import com.website.enbookingbe.core.user.management.entity.User;
 import com.website.enbookingbe.core.user.management.exception.UserNotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.core.Authentication;
@@ -26,7 +25,7 @@ public class SecurityUtils {
     private SecurityUtils() {
     }
 
-    public static Optional<User> getCurrentUser() {
+    public static Optional<Principal> getCurrentUser() {
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         final Authentication authentication = securityContext.getAuthentication();
 
@@ -35,14 +34,14 @@ public class SecurityUtils {
         }
 
         final Object principal = authentication.getPrincipal();
-        if (principal instanceof User user) {
+        if (principal instanceof Principal user) {
             return Optional.of(user);
         }
 
         return Optional.empty();
     }
 
-    public static User getCurrentUserOrThrow() {
+    public static Principal getCurrentUserOrThrow() {
         return getCurrentUser().orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 

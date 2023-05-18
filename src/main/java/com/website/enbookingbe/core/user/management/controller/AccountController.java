@@ -1,15 +1,18 @@
 package com.website.enbookingbe.core.user.management.controller;
 
-import com.website.enbookingbe.core.security.Principal;
 import com.website.enbookingbe.core.user.management.entity.User;
-import com.website.enbookingbe.core.user.management.mapper.UserMapper;
-import com.website.enbookingbe.core.user.management.model.RegistrationRequest;
+import com.website.enbookingbe.core.user.management.UserMapper;
+import com.website.enbookingbe.core.user.management.resource.RegistrationResource;
 import com.website.enbookingbe.core.user.management.service.UserMailService;
 import com.website.enbookingbe.core.user.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -27,7 +30,7 @@ public class AccountController {
     private String websiteUrl;
 
     @PostMapping("/register")
-    public void register(@RequestBody @Valid RegistrationRequest dto) {
+    public void register(@RequestBody @Valid RegistrationResource dto) {
         User user = userMapper.toNewUser(dto);
         user = userService.save(user);
 
@@ -39,10 +42,5 @@ public class AccountController {
         userService.activate(key);
 
         response.sendRedirect(websiteUrl + "/login");
-    }
-
-    @GetMapping("/me")
-    public Principal me(@AuthenticationPrincipal Principal principal) {
-        return principal;
     }
 }

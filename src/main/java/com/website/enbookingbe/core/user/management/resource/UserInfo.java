@@ -1,4 +1,4 @@
-package com.website.enbookingbe.core.user.management.model;
+package com.website.enbookingbe.core.user.management.resource;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

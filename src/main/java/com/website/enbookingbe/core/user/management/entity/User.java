@@ -1,7 +1,6 @@
 package com.website.enbookingbe.core.user.management.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.website.enbookingbe.client.card.entity.Card;
 import com.website.enbookingbe.client.card.entity.Quiz;
 import com.website.enbookingbe.client.card.entity.UserCard;
@@ -19,7 +18,8 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "\"user\"")
-public class User {
+public class User extends AbstractAuditingEntity<Integer> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -43,7 +43,6 @@ public class User {
     @Size(max = 256)
     @NotNull
     @Column(name = "password", nullable = false, length = 256)
-    @JsonIgnore
     private String password;
 
     @Size(max = 256)
@@ -54,11 +53,9 @@ public class User {
     private Boolean activated;
 
     @Column(name = "activation_key")
-    @JsonIgnore
     private String activationKey;
 
     @Column(name = "reset_key")
-    @JsonIgnore
     private String resetKey;
 
     @Column(name = "reset_date")
@@ -69,39 +66,19 @@ public class User {
     @Column(name = "lang_key", length = 5)
     private String langKey;
 
-    @Size(max = 50)
-    @Column(name = "created_by", length = 50)
-    private String createdBy;
-
-    @NotNull
-    @Column(name = "created_date", nullable = false)
-    private Instant createdDate;
-
-    @Size(max = 50)
-    @Column(name = "last_modified_by", length = 50)
-    private String lastModifiedBy;
-
-    @NotNull
-    @Column(name = "last_modified_date", nullable = false)
-    private Instant lastModifiedDate;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JsonIgnore
     private Set<Quiz> quizzes = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JsonIgnore
     private Set<UserCard> cardCollections = new LinkedHashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_role",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonManagedReference
     private Set<Role> roles = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JsonIgnore
     private Set<Card> cards = new LinkedHashSet<>();
 
     public void addRole(Role role) {

@@ -3,7 +3,7 @@ package com.website.enbookingbe.core.user.management.controller;
 import com.website.enbookingbe.client.card.mapper.CardMapper;
 import com.website.enbookingbe.client.card.resource.CardResource;
 import com.website.enbookingbe.client.card.service.CardService;
-import com.website.enbookingbe.core.user.management.model.UserInfo;
+import com.website.enbookingbe.core.user.management.resource.UserInfo;
 import com.website.enbookingbe.core.user.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +17,11 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
+    private static final CardMapper cardMapper = new CardMapper();
+
     private final UserService userService;
     private final CardService cardService;
-    private final CardMapper cardMapper = new CardMapper();
+
 
     @GetMapping("/{id}")
     public UserInfo userInfo(@PathVariable Integer id) {

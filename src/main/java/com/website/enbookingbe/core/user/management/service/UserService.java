@@ -4,7 +4,7 @@ import com.website.enbookingbe.core.exception.NotFoundException;
 import com.website.enbookingbe.core.user.management.entity.User;
 import com.website.enbookingbe.core.user.management.exception.UserAlreadyExistsException;
 import com.website.enbookingbe.core.user.management.exception.UserNotFoundException;
-import com.website.enbookingbe.core.user.management.model.UserInfo;
+import com.website.enbookingbe.core.user.management.resource.UserInfo;
 import com.website.enbookingbe.core.user.management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

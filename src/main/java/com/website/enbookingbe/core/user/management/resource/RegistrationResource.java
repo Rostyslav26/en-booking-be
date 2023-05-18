@@ -1,4 +1,4 @@
-package com.website.enbookingbe.core.user.management.model;
+package com.website.enbookingbe.core.user.management.resource;
 
 import lombok.*;
 
@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationRequest {
+public class RegistrationResource {
 
     @NotBlank
     @Email

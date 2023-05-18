@@ -1,7 +1,7 @@
 package com.website.enbookingbe.core.user.management.repository;
 
 import com.website.enbookingbe.core.user.management.entity.User;
-import com.website.enbookingbe.core.user.management.model.UserInfo;
+import com.website.enbookingbe.core.user.management.resource.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,6 +14,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByActivationKey(String activationKey);
 
-    @Query("select new com.website.enbookingbe.core.user.management.model.UserInfo(u.id, u.email, u.firstName, u.lastName, u.imageUrl) from User u where u.id = ?1")
+    @Query(value = "select  "
+                   + "u.id as userId, "
+                   + "u.email, "
+                   + "u.first_name as firstName, "
+                   + "u.last_name as lastName, "
+                   + "u.image_url as imageUrl "
+                   + "from \"user\" u "
+                   + "where u.id = ?1", nativeQuery = true)
     Optional<UserInfo> getUserInfoById(Integer id);
+
 }

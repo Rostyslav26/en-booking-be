@@ -25,7 +25,6 @@ public class MailService {
     private static final String BASE_URL = "baseUrl";
 
     private final JavaMailSender javaMailSender;
-    private final MessageSource messageSource;
     private final SpringTemplateEngine templateEngine;
 
     @Value("${website.mail.from}")
@@ -34,9 +33,8 @@ public class MailService {
     private String baseUrl;
 
     @Autowired
-    public MailService(MessageSource messageSource, SpringTemplateEngine templateEngine, JavaMailSender javaMailSender) {
+    public MailService(SpringTemplateEngine templateEngine, JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
-        this.messageSource = messageSource;
         this.templateEngine = templateEngine;
     }
 

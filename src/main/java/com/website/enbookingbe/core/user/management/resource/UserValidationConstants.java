@@ -1,4 +1,4 @@
-package com.website.enbookingbe.core.user.management.model;
+package com.website.enbookingbe.core.user.management.resource;
 
 public class UserValidationConstants {
     public static final int PASSWORD_MIN_LENGTH = 4;

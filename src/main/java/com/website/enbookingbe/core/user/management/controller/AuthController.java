@@ -2,7 +2,7 @@ package com.website.enbookingbe.core.user.management.controller;
 
 import com.website.enbookingbe.core.security.jwt.JWTFilter;
 import com.website.enbookingbe.core.security.jwt.JWTProvider;
-import com.website.enbookingbe.core.user.management.model.LoginRequest;
+import com.website.enbookingbe.core.user.management.resource.LoginResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authorize(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<Map<String, String>> authorize(@Valid @RequestBody LoginResource request) {
         final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
             request.getEmail(),
             request.getPassword()

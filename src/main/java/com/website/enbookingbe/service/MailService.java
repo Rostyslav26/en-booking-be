@@ -1,0 +1,78 @@
+package com.website.enbookingbe.service;
+
+import com.website.enbookingbe.management.entity.User;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+
+@Service
+@Slf4j
+public class MailService {
+    private static final String USER = "user";
+    private static final String BASE_URL = "baseUrl";
+
+    private final JavaMailSender javaMailSender;
+    private final SpringTemplateEngine templateEngine;
+
+    @Value("${website.mail.from}")
+    private String from;
+    @Value("${website.mail.base-url}")
+    private String baseUrl;
+
+    @Autowired
+    public MailService(SpringTemplateEngine templateEngine, JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+        this.templateEngine = templateEngine;
+    }
+
+    @Async
+    public void sendEmail(String to, String content, boolean isMultipart, boolean isHtml) {
+        logSendEmail(to, content, isMultipart, isHtml);
+
+        final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            final MimeMessageHelper message = new MimeMessageHelper(mimeMessage, isMultipart, StandardCharsets.UTF_8.name());
+            message.setTo(to);
+            message.setFrom(from);
+            message.setText(content, isHtml);
+
+            javaMailSender.send(mimeMessage);
+            log.debug("Sent email to User '{}'", to);
+        } catch (MailException | MessagingException e) {
+            log.warn("Email could not be sent to user '{}'", to, e);
+        }
+    }
+
+    @Async
+    public void sendEmailFromTemplate(User user, String templateName) {
+        final Locale locale = Locale.forLanguageTag(user.getLangKey());
+        final Context context = new Context(locale);
+        context.setVariable(USER, user);
+        context.setVariable(BASE_URL, baseUrl);
+
+        final String content = templateEngine.process(templateName, context);
+        sendEmail(user.getEmail(), content, false, true);
+    }
+
+    private void logSendEmail(String to, String content, boolean isMultipart, boolean isHtml) {
+        log.debug(
+            "Send email[multipart '{}' and html '{}'] to '{}' and content={}",
+            isMultipart,
+            isHtml,
+            to,
+            content
+        );
+    }
+}

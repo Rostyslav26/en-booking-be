@@ -1,20 +1,21 @@
 package com.website.enbookingbe.quiz;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-@Component
 public class PromptGenerator {
     private static final int MIN_MASK_LENGTH = 2;
     private static final int MAX_MASK_LENGTH = 3;
 
-    private final Random random = new Random();
+    private static final Random random = new Random();
 
-    public String generatePrompt(final String answer) {
+    private PromptGenerator() {
+    }
+
+    public static String generatePrompt(final String answer) {
         final List<String> words = Arrays.asList(StringUtils.split(answer, " "));
 
         for (int i = 0; i < words.size(); i++) {

@@ -3,6 +3,8 @@ package com.website.enbookingbe.quiz;
 import com.google.common.collect.Sets;
 import com.website.enbookingbe.card.Card;
 import com.website.enbookingbe.card.CardService;
+import com.website.enbookingbe.exception.NotFoundException;
+import com.website.enbookingbe.management.entity.User;
 import com.website.enbookingbe.quiz.entity.Quiz;
 import com.website.enbookingbe.quiz.entity.QuizCard;
 import com.website.enbookingbe.quiz.exception.QuizCardAlreadyCompletedException;
@@ -14,8 +16,6 @@ import com.website.enbookingbe.quiz.model.QuizInfo;
 import com.website.enbookingbe.quiz.model.QuizStatus;
 import com.website.enbookingbe.quiz.repository.QuizCardRepository;
 import com.website.enbookingbe.quiz.repository.QuizRepository;
-import com.website.enbookingbe.exception.NotFoundException;
-import com.website.enbookingbe.management.entity.User;
 import com.website.enbookingbe.utils.CollectUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,7 +40,6 @@ public class QuizService {
     private final CardService cardService;
     private final QuizRepository quizRepository;
     private final QuizCardRepository quizCardRepository;
-    private final PromptGenerator promptGenerator;
 
     public List<QuizCardResource> learnQuiz(Integer quizId, Integer userId) {
         final Quiz quiz = quizRepository.findByIdAndAndUserId(quizId, userId)
@@ -76,7 +81,7 @@ public class QuizService {
 
         return cards.stream()
             .map(card -> {
-                final String prompt = promptGenerator.generatePrompt(card.getAnswer());
+                final String prompt = PromptGenerator.generatePrompt(card.getAnswer());
                 return new QuizCardResource(card.getId(), card.getQuestion(), card.getAnswer(), prompt);
             })
             .toList();

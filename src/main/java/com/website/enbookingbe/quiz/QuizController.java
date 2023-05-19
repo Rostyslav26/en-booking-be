@@ -1,7 +1,7 @@
 package com.website.enbookingbe.quiz;
 
 import com.website.enbookingbe.quiz.entity.Quiz;
-import com.website.enbookingbe.quiz.model.QuizCardResource;
+import com.website.enbookingbe.quiz.resource.QuizCardResource;
 import com.website.enbookingbe.quiz.model.QuizInfo;
 import com.website.enbookingbe.quiz.resource.QuizResource;
 import com.website.enbookingbe.management.entity.User;

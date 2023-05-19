@@ -1,4 +1,4 @@
-package com.website.enbookingbe.quiz.model;
+package com.website.enbookingbe.quiz.resource;
 
 public record QuizCardResource(
     Integer cardId,

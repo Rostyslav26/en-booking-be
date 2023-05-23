@@ -44,4 +44,9 @@ public class UserService {
         return userRepository.getUserInfoById(id)
             .orElseThrow(UserNotFoundException::new);
     }
+
+    public User getById(Integer userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(UserNotFoundException::new);
+    }
 }

@@ -1,7 +1,8 @@
-package com.website.enbookingbe.quiz;
+package com.website.enbookingbe.quiz.service;
 
 import com.website.enbookingbe.card.Card;
 import com.website.enbookingbe.card.CardService;
+import com.website.enbookingbe.quiz.PromptGenerator;
 import com.website.enbookingbe.quiz.entity.QuizCard;
 import com.website.enbookingbe.quiz.model.QuizCardStatus;
 import com.website.enbookingbe.quiz.resource.QuizCardResource;
@@ -19,7 +20,7 @@ public class QuizCardGenerator {
     private final CardService cardService;
 
     public List<QuizCardResource> prepareQuizCardsToLearn(Collection<QuizCard> quizCards) {
-        quizCards.forEach(qc -> qc.setStatus(QuizCardStatus.IN_PROGRESS));
+        quizCards.forEach(this::markAsInProgress);
 
         final List<Integer> cardIds = quizCards.stream()
             .map(qz -> qz.getId().getCardId())
@@ -31,6 +32,10 @@ public class QuizCardGenerator {
         return cards.stream()
             .map(this::toQuizCardResource)
             .collect(Collectors.toList());
+    }
+
+    private void markAsInProgress(QuizCard quizCard) {
+        quizCard.setStatus(QuizCardStatus.COMPLETED);
     }
 
     private QuizCardResource toQuizCardResource(Card card) {

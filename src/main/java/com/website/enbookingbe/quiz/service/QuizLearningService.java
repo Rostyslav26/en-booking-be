@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,10 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.website.enbookingbe.quiz.model.QuizCardStatus.*;
+import static com.google.common.base.Preconditions.checkState;
+import static com.website.enbookingbe.quiz.model.QuizCardStatus.COMPLETED;
+import static com.website.enbookingbe.quiz.model.QuizCardStatus.FAILED;
 import static com.website.enbookingbe.quiz.model.QuizStatus.IN_PROGRESS;
-import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 
 @Service
@@ -72,7 +74,7 @@ public class QuizLearningService {
 
         final Map<QuizCardStatus, List<Card>> cardsByStatus = getCardsByStatus(quiz);
 
-        final List<Card> completedCards = cardsByStatus.getOrDefault(COMPLETED, emptyList());
+        final Collection<Card> completedCards = cardsByStatus.getOrDefault(COMPLETED, emptyList());
         if (completedCards.size() == quiz.getQuizCards().size()) {
             resetQuizStatus(quiz, QuizStatus.COMPLETED);
         }
@@ -88,28 +90,24 @@ public class QuizLearningService {
         final Map<Integer, Card> cardById = cardService.getByIds(cardIds).stream()
             .collect(Collectors.toMap(Card::getId, Function.identity()));
 
-        final Map<QuizCardStatus, List<Card>> cardsByStatus = new HashMap<>();
+        Map<QuizCardStatus, List<Card>> cardsByStatus = new HashMap<>();
 
         for (QuizCard quizCard : quiz.getQuizCards()) {
             final QuizCardStatus quizCardStatus = quizCard.getStatus();
+            final Card card = cardById.get(quizCard.getId().getCardId());
 
-            cardsByStatus.computeIfAbsent(quizCardStatus, k -> new ArrayList<>())
-                .add(cardById.get(quizCard.getId().getCardId()));
+            cardsByStatus.computeIfAbsent(quizCardStatus, k -> new ArrayList<>()).add(card);
         }
 
         return cardsByStatus;
     }
 
     public void checkQuizCardStatus(QuizCard quizCard, QuizCardStatus status) {
-        if (Objects.equals(quizCard.getStatus(), status)) {
-            throw new IllegalStateException(format("Quiz card already %s", status));
-        }
+        checkState(quizCard.getStatus() == status, "Quiz card status is not %s", status);
     }
 
     public void checkQuizIsCompleted(Quiz quiz) {
-        if (Objects.equals(quiz.getStatus(), QuizStatus.COMPLETED)) {
-            throw new IllegalStateException("Quiz already completed");
-        }
+        checkState(quiz.getStatus() == QuizStatus.COMPLETED, "Quiz is already completed");
     }
 
     private void resetQuizStatus(Quiz quiz, QuizStatus status) {

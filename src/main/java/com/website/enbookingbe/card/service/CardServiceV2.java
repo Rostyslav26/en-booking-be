@@ -1,5 +1,6 @@
-package com.website.enbookingbe.card;
+package com.website.enbookingbe.card.service;
 
+import com.website.enbookingbe.card.CardV2;
 import com.website.enbookingbe.card.repository.CardRepositoryV2;
 import com.website.enbookingbe.card.resource.CreateCardResource;
 import lombok.RequiredArgsConstructor;

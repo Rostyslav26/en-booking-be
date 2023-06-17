@@ -1,0 +1,33 @@
+<!ELEMENT dataset (
+        card*,
+        user*
+        )>
+
+<!ELEMENT card EMPTY>
+<!ATTLIST card
+        id CDATA #REQUIRED
+        question CDATA #REQUIRED
+        answer CDATA #REQUIRED
+        created_at CDATA #REQUIRED
+        updated_at CDATA #REQUIRED
+        author_id CDATA #REQUIRED
+        >
+
+<!ELEMENT user EMPTY>
+<!ATTLIST user
+        id CDATA #REQUIRED
+        first_name CDATA #REQUIRED
+        last_name CDATA #REQUIRED
+        email CDATA #REQUIRED
+        password CDATA #REQUIRED
+        image_url CDATA #IMPLIED
+        activated CDATA #IMPLIED
+        activation_key CDATA #IMPLIED
+        reset_key CDATA #IMPLIED
+        reset_date CDATA #IMPLIED
+        lang_key CDATA #REQUIRED
+        created_by CDATA #IMPLIED
+        created_date CDATA #REQUIRED
+        last_modified_by CDATA #IMPLIED
+        last_modified_date CDATA #REQUIRED
+        >

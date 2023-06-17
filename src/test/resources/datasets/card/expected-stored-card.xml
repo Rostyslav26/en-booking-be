@@ -1,0 +1,5 @@
+<!DOCTYPE dataset SYSTEM "src/test/resources/datasets/database.dtd">
+
+<dataset>
+    <card id="1" question="question" answer="answer" created_at="" updated_at="" author_id="1"/>
+</dataset>

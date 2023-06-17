@@ -1,15 +1,13 @@
 package com.website.enbookingbe.card;
 
-import com.website.enbookingbe.card.Card;
-import com.website.enbookingbe.quiz.entity.UserCard;
-import com.website.enbookingbe.quiz.entity.UserCardId;
-import com.website.enbookingbe.card.CardNotFoundException;
-import com.website.enbookingbe.card.resource.CreateCardResource;
-import com.website.enbookingbe.card.resource.UpdateCardResource;
 import com.website.enbookingbe.card.repository.CardRepository;
 import com.website.enbookingbe.card.repository.UserCardRepository;
-import com.website.enbookingbe.management.entity.*;
+import com.website.enbookingbe.card.resource.CreateCardResource;
+import com.website.enbookingbe.card.resource.UpdateCardResource;
+import com.website.enbookingbe.management.entity.User;
 import com.website.enbookingbe.management.repository.UserRepository;
+import com.website.enbookingbe.quiz.entity.UserCard;
+import com.website.enbookingbe.quiz.entity.UserCardId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -17,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor

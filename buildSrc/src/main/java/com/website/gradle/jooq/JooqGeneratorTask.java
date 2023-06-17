@@ -4,7 +4,13 @@ import org.flywaydb.core.Flyway;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import org.jooq.codegen.GenerationTool;
-import org.jooq.meta.jaxb.*;
+import org.jooq.meta.jaxb.Configuration;
+import org.jooq.meta.jaxb.Database;
+import org.jooq.meta.jaxb.Generate;
+import org.jooq.meta.jaxb.Generator;
+import org.jooq.meta.jaxb.Jdbc;
+import org.jooq.meta.jaxb.SchemaMappingType;
+import org.jooq.meta.jaxb.Target;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -79,7 +85,7 @@ public class JooqGeneratorTask extends DefaultTask {
                     )
                     .withTarget(new Target()
                         .withPackageName("com.website.enbookingbe.data.jooq")
-                        .withDirectory(projectDir + "/src/main/java")));
+                        .withDirectory(projectDir + "/src/main/generated-java")));
             GenerationTool.generate(configuration);
         } catch (Exception e) {
             logger.error("Error during generating jooq tables", e);

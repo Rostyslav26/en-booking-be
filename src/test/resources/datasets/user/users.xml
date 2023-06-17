@@ -1,0 +1,21 @@
+<!DOCTYPE dataset SYSTEM "src/test/resources/datasets/database.dtd">
+
+<dataset>
+    <usr
+            id="1"
+            first_name="John"
+            last_name="Doe"
+            email="johndoe@example.com"
+            password="password123"
+            image_url="http://example.com/profile.jpg"
+            activated="true"
+            activation_key="activation123"
+            reset_key="reset123"
+            reset_date="[DAY,NOW]"
+            lang_key="en"
+            created_by="admin"
+            created_date="[DAY,NOW]"
+            last_modified_by="admin"
+            last_modified_date="[DAY,NOW]"
+    />
+</dataset>

@@ -1,4 +1,4 @@
-CREATE TABLE "user"
+CREATE TABLE usr
 (
     id                 SERIAL PRIMARY KEY,
     first_name         VARCHAR(50)  NOT NULL,
@@ -17,5 +17,5 @@ CREATE TABLE "user"
     last_modified_date TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE UNIQUE INDEX user_email_idx ON "user" (email);
-CREATE INDEX user_activation_key_idx ON "user" (activation_key);
+CREATE UNIQUE INDEX user_email_idx ON usr (email);
+CREATE INDEX user_activation_key_idx ON usr (activation_key);

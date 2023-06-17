@@ -1,6 +1,7 @@
 <!ELEMENT dataset (
         card*,
-        user*
+        usr*,
+        user_card*
         )>
 
 <!ELEMENT card EMPTY>
@@ -13,21 +14,29 @@
         author_id CDATA #REQUIRED
         >
 
-<!ELEMENT user EMPTY>
-<!ATTLIST user
+<!ELEMENT usr EMPTY>
+<!ATTLIST usr
         id CDATA #REQUIRED
         first_name CDATA #REQUIRED
         last_name CDATA #REQUIRED
         email CDATA #REQUIRED
         password CDATA #REQUIRED
-        image_url CDATA #IMPLIED
-        activated CDATA #IMPLIED
+        image_url CDATA #REQUIRED
+        activated CDATA #REQUIRED
         activation_key CDATA #IMPLIED
-        reset_key CDATA #IMPLIED
-        reset_date CDATA #IMPLIED
+        reset_key CDATA #REQUIRED
+        reset_date CDATA #REQUIRED
         lang_key CDATA #REQUIRED
-        created_by CDATA #IMPLIED
+        created_by CDATA #REQUIRED
         created_date CDATA #REQUIRED
-        last_modified_by CDATA #IMPLIED
+        last_modified_by CDATA #REQUIRED
         last_modified_date CDATA #REQUIRED
+        >
+
+<!ELEMENT user_card EMPTY>
+<!ATTLIST user_card
+        card_id CDATA #REQUIRED
+        user_id CDATA #REQUIRED
+        learned CDATA #IMPLIED
+        favorite CDATA #IMPLIED
         >

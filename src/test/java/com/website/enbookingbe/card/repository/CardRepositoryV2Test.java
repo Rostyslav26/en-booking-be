@@ -3,7 +3,7 @@ package com.website.enbookingbe.card.repository;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.website.enbookingbe.DBTest;
-import com.website.enbookingbe.card.CardV2;
+import com.website.enbookingbe.card.domain.CardV2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,10 +24,11 @@ class CardRepositoryV2Test {
     @DataSet("datasets/user/users.xml")
     @ExpectedDataSet(value = "datasets/card/expected-stored-card.xml", ignoreCols = {"created_at", "updated_at"})
     void testSaveCard() {
-        CardV2 card = new CardV2();
-        card.setQuestion("question");
-        card.setAnswer("answer");
-        card.setAuthorId(1);
+        CardV2 card = CardV2.builder()
+            .question("question")
+            .answer("answer")
+            .authorId(1)
+            .build();
 
         CardV2 actual = cardRepositoryV2.save(card);
         assertEquals(1, actual.getId());
@@ -53,11 +54,12 @@ class CardRepositoryV2Test {
     }
 
     private CardV2 getExpectedCard(Integer id) {
-        CardV2 card = new CardV2();
-        card.setId(id);
-        card.setQuestion("question" + id);
-        card.setAnswer("answer" + id);
-        card.setAuthorId(1);
+        CardV2 card = CardV2.builder()
+            .id(id)
+            .question("question" + id)
+            .answer("answer" + id)
+            .authorId(1)
+            .build();
 
         LocalDateTime dateTime = LocalDateTime.of(2019, 1, 1, 0, 0, 0);
         card.setCreatedAt(dateTime);

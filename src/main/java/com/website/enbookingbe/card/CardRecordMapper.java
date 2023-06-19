@@ -1,5 +1,6 @@
 package com.website.enbookingbe.card;
 
+import com.website.enbookingbe.card.domain.CardV2;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
@@ -9,15 +10,13 @@ public class CardRecordMapper implements RecordMapper<Record, CardV2> {
 
     @Override
     public CardV2 map(Record record) {
-        CardV2 card = new CardV2();
-
-        card.setId(record.get(CARD.ID));
-        card.setQuestion(record.get(CARD.QUESTION));
-        card.setAnswer(record.get(CARD.ANSWER));
-        card.setAuthorId(record.get(CARD.AUTHOR_ID));
-        card.setCreatedAt(record.get(CARD.CREATED_AT));
-        card.setUpdatedAt(record.get(CARD.UPDATED_AT));
-
-        return card;
+        return CardV2.builder()
+            .id(record.get(CARD.ID))
+            .question(record.get(CARD.QUESTION))
+            .answer(record.get(CARD.ANSWER))
+            .authorId(record.get(CARD.AUTHOR_ID))
+            .createdAt(record.get(CARD.CREATED_AT))
+            .updatedAt(record.get(CARD.UPDATED_AT))
+            .build();
     }
 }

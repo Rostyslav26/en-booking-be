@@ -1,6 +1,6 @@
 package com.website.enbookingbe.card.service;
 
-import com.website.enbookingbe.card.CardV2;
+import com.website.enbookingbe.card.domain.CardV2;
 import com.website.enbookingbe.card.repository.CardRepositoryV2;
 import com.website.enbookingbe.card.resource.CreateCardResource;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +24,10 @@ public class CardServiceV2 {
     }
 
     private CardV2 createNewCard(String question, String answer, Integer userId) {
-        final CardV2 card = new CardV2();
-        card.setQuestion(question);
-        card.setAnswer(answer);
-        card.setAuthorId(userId);
-
-        return card;
+        return CardV2.builder()
+            .question(question)
+            .answer(answer)
+            .authorId(userId)
+            .build();
     }
 }

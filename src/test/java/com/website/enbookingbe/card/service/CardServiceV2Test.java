@@ -1,6 +1,6 @@
 package com.website.enbookingbe.card.service;
 
-import com.website.enbookingbe.card.CardV2;
+import com.website.enbookingbe.card.domain.CardV2;
 import com.website.enbookingbe.card.repository.CardRepositoryV2;
 import com.website.enbookingbe.card.resource.CreateCardResource;
 import org.junit.jupiter.api.Test;
@@ -45,14 +45,13 @@ class CardServiceV2Test {
     }
 
     private CardV2 getCard(LocalDateTime date) {
-        CardV2 card = new CardV2();
-        card.setId(1);
-        card.setQuestion("question");
-        card.setAnswer("answer");
-        card.setAuthorId(1);
-        card.setCreatedAt(date);
-        card.setUpdatedAt(date);
-
-        return card;
+        return CardV2.builder()
+            .id(1)
+            .question("question")
+            .answer("answer")
+            .authorId(1)
+            .createdAt(date)
+            .updatedAt(date)
+            .build();
     }
 }

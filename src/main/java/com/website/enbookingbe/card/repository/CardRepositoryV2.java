@@ -1,7 +1,7 @@
 package com.website.enbookingbe.card.repository;
 
 import com.website.enbookingbe.card.CardRecordMapper;
-import com.website.enbookingbe.card.CardV2;
+import com.website.enbookingbe.card.domain.CardV2;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;

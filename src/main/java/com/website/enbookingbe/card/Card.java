@@ -1,6 +1,6 @@
 package com.website.enbookingbe.card;
 
-import com.website.enbookingbe.management.entity.User;
+import com.website.enbookingbe.management.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;

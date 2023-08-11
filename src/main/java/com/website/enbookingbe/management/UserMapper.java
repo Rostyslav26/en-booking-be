@@ -1,7 +1,7 @@
 package com.website.enbookingbe.management;
 
-import com.website.enbookingbe.management.entity.Role;
-import com.website.enbookingbe.management.entity.User;
+import com.website.enbookingbe.management.domain.Role;
+import com.website.enbookingbe.management.domain.User;
 import com.website.enbookingbe.management.resource.RegistrationResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

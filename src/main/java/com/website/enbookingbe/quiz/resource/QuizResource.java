@@ -1,6 +1,6 @@
 package com.website.enbookingbe.quiz.resource;
 
-import com.website.enbookingbe.quiz.model.QuizStatus;
+import com.website.enbookingbe.quiz.domain.QuizStatus;
 
 import java.time.LocalDateTime;
 

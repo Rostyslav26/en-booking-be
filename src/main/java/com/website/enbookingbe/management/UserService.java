@@ -1,15 +1,20 @@
 package com.website.enbookingbe.management;
 
 import com.website.enbookingbe.exception.NotFoundException;
-import com.website.enbookingbe.management.entity.User;
+import com.website.enbookingbe.management.domain.Role;
+import com.website.enbookingbe.management.domain.User;
 import com.website.enbookingbe.management.exception.UserAlreadyExistsException;
-import com.website.enbookingbe.management.exception.UserNotFoundException;
-import com.website.enbookingbe.management.resource.UserInfo;
+import com.website.enbookingbe.management.repository.RoleRepository;
 import com.website.enbookingbe.management.repository.UserRepository;
+import com.website.enbookingbe.management.resource.RegistrationResource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.website.enbookingbe.data.jooq.tables.User.USER;
 
 @Service
 @Transactional
@@ -17,15 +22,22 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final UserMapper userMapper;
 
-    public User save(User user) {
-        final String email = user.getEmail();
-        
+    public User save(RegistrationResource resource) {
+        final String email = resource.getEmail();
         if (userRepository.existsByEmail(email)) {
             throw new UserAlreadyExistsException(email);
         }
 
-        userRepository.save(user);
+        final User user = userRepository.save(userMapper.toNewUser(resource));
+
+        final List<String> roleIds = user.getRoles().stream()
+            .map(Role::getId)
+            .toList();
+
+        roleRepository.save(user.getId(), roleIds);
 
         return user;
     }
@@ -37,16 +49,8 @@ public class UserService {
         user.setActivated(true);
         user.setActivationKey(null);
 
+        userRepository.update(user, USER.ACTIVATED, USER.ACTIVATION_KEY);
+
         log.debug("User '{}' has been activated", user.getEmail());
-    }
-
-    public UserInfo getUserInfo(Integer id) {
-        return userRepository.getUserInfoById(id)
-            .orElseThrow(UserNotFoundException::new);
-    }
-
-    public User getById(Integer userId) {
-        return userRepository.findById(userId)
-            .orElseThrow(UserNotFoundException::new);
     }
 }

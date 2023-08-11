@@ -1,6 +1,6 @@
 package com.website.enbookingbe.service;
 
-import com.website.enbookingbe.management.entity.User;
+import com.website.enbookingbe.management.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

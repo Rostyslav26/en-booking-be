@@ -1,19 +1,38 @@
 package com.website.enbookingbe.quiz.repository;
 
-import com.website.enbookingbe.quiz.entity.Quiz;
-import com.website.enbookingbe.quiz.model.QuizStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import com.website.enbookingbe.data.jooq.tables.records.QuizRecord;
+import com.website.enbookingbe.quiz.domain.Quiz;
+import com.website.enbookingbe.quiz.repository.mapper.QuizRecordMapper;
+import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-public interface QuizRepository extends JpaRepository<Quiz, Integer> {
+import static com.website.enbookingbe.data.jooq.tables.Quiz.QUIZ;
 
-    @Query("select q from Quiz q join fetch q.quizCards WHERE q.id = ?1 and q.user.id = ?2")
-    Optional<Quiz> findByIdAndAndUserId(Integer quizId, Integer userId);
+@Repository
+@RequiredArgsConstructor
+public class QuizRepository {
+    private final QuizRecordMapper mapper = new QuizRecordMapper();
 
-    @Query("select (count(q) > 0) from Quiz q where q.id = ?1 and q.status = ?2 and q.user.id = ?3")
-    boolean isQuizHasStatus(Integer quizId, QuizStatus status, Integer userId);
+    private final DSLContext dsl;
 
-    boolean existsByIdAndUserId(Integer quizId, Integer userId);
+    public Optional<Quiz> findOne(Integer quizId, Integer userId) {
+        return dsl.select(QUIZ.fields())
+            .from(QUIZ)
+            .where(QUIZ.ID.eq(quizId))
+            .and(QUIZ.USER_ID.eq(userId))
+            .fetchOptional(mapper);
+    }
+
+    public Quiz save(Quiz quiz) {
+        final QuizRecord record = mapper.unmap(quiz);
+
+        dsl.insertInto(QUIZ)
+            .set(record)
+            .execute();
+
+        return mapper.map(record);
+    }
 }

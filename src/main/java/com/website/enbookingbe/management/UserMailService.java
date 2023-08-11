@@ -1,7 +1,7 @@
 package com.website.enbookingbe.management;
 
+import com.website.enbookingbe.management.domain.User;
 import com.website.enbookingbe.service.MailService;
-import com.website.enbookingbe.management.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,7 @@
 package com.website.enbookingbe.config;
 
 import com.website.enbookingbe.quiz.QuizService;
+import com.website.enbookingbe.resolver.PageRequestResolver;
 import com.website.enbookingbe.resolver.QuizParamResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,7 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new QuizParamResolver(quizService));
+        resolvers.add(new PageRequestResolver());
     }
 
     private void setLocationForStaticAssets(WebServerFactory server) {

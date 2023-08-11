@@ -1,21 +1,19 @@
 package com.website.enbookingbe.security;
 
 import lombok.Builder;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@Getter
 @Builder
 public class Principal implements UserDetails {
     private Integer id;
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
-
-    public Integer getId() {
-        return id;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

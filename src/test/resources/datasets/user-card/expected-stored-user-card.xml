@@ -1,5 +1,5 @@
 <!DOCTYPE dataset SYSTEM "src/test/resources/datasets/database.dtd">
 
 <dataset>
-    <user_card card_id="1" user_id="1"/>
+    <user_card card_id="1" user_id="1" favorite="false" learned="false"/>
 </dataset>

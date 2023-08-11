@@ -1,7 +1,7 @@
 package com.website.enbookingbe.security;
 
-import com.website.enbookingbe.management.entity.Role;
-import com.website.enbookingbe.management.entity.User;
+import com.website.enbookingbe.management.domain.Role;
+import com.website.enbookingbe.management.domain.User;
 import com.website.enbookingbe.management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,19 +1,99 @@
 package com.website.enbookingbe.card.repository;
 
-import com.website.enbookingbe.quiz.entity.UserCard;
-import com.website.enbookingbe.quiz.entity.UserCardId;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import com.website.enbookingbe.card.domain.UserCard;
+import com.website.enbookingbe.card.repository.mapper.UserCardRecordMapper;
+import com.website.enbookingbe.data.jooq.tables.records.UserCardRecord;
+import com.website.enbookingbe.utils.PageRequest;
+import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface UserCardRepository extends JpaRepository<UserCard, UserCardId> {
+import static com.website.enbookingbe.data.jooq.tables.Card.CARD;
+import static com.website.enbookingbe.data.jooq.tables.UserCard.USER_CARD;
 
-    @Query("select u from UserCard u where u.learned = false and u.user.id = ?1")
-    List<UserCard> findNotLearnedByUserId(Integer userId, Pageable pageable);
+@Repository
+@RequiredArgsConstructor
+public class UserCardRepository {
+    private final DSLContext dsl;
+    private final UserCardRecordMapper mapper = new UserCardRecordMapper();
 
-    List<UserCard> findByUserId(Integer userId);
+    public UserCard save(UserCard userCard) {
+        dsl.insertInto(USER_CARD)
+            .set(USER_CARD.USER_ID, userCard.getUserId())
+            .set(USER_CARD.CARD_ID, userCard.getCard().getId())
+            .set(USER_CARD.FAVORITE, userCard.isFavorite())
+            .set(USER_CARD.LEARNED, userCard.isLearned())
+            .execute();
 
-    List<UserCard> findByUserIdAndCardIdIn(Integer userId, List<Integer> cardIds);
+        return userCard;
+    }
+
+    public List<UserCard> findAllByUserId(Integer userId) {
+        return dsl.select(getFields())
+            .from(USER_CARD)
+            .join(CARD).on(USER_CARD.CARD_ID.eq(CARD.ID))
+            .where(USER_CARD.USER_ID.eq(userId))
+            .fetch(mapper);
+    }
+
+    public Optional<UserCard> findById(Integer userId, Integer cardId) {
+        return dsl.select(getFields())
+            .from(USER_CARD)
+            .join(CARD).on(USER_CARD.CARD_ID.eq(CARD.ID))
+            .where(USER_CARD.USER_ID.eq(userId))
+            .and(USER_CARD.CARD_ID.eq(cardId))
+            .fetchOptional(mapper);
+    }
+
+    public List<UserCard> findAllByUserIdAndCardIds(Integer userId, List<Integer> cardIds) {
+        return dsl.select(getFields())
+            .from(USER_CARD)
+            .join(CARD).on(USER_CARD.CARD_ID.eq(CARD.ID))
+            .where(USER_CARD.USER_ID.eq(userId))
+            .and(USER_CARD.CARD_ID.in(cardIds))
+            .fetch(mapper);
+    }
+
+    public List<UserCard> findNotLearnedByUserId(Integer userId, PageRequest pageRequest) {
+        return dsl.select(getFields())
+            .from(USER_CARD)
+            .join(CARD).on(USER_CARD.CARD_ID.eq(CARD.ID))
+            .where(USER_CARD.USER_ID.eq(userId))
+            .and(USER_CARD.LEARNED.isFalse())
+            .orderBy(CARD.CREATED_AT.desc())
+            .limit(pageRequest.getSize())
+            .offset(pageRequest.getOffset())
+            .fetch(mapper);
+    }
+
+    public void remove(Integer userId, Integer cardId) {
+        dsl.deleteFrom(USER_CARD)
+            .where(USER_CARD.USER_ID.eq(userId))
+            .and(USER_CARD.CARD_ID.eq(cardId))
+            .execute();
+    }
+
+    public void update(UserCard userCard, Field<?>... fields) {
+        UserCardRecord record = dsl.newRecord(USER_CARD, mapper.unmap(userCard));
+        record.update(fields);
+    }
+
+    private List<Field<?>> getFields() {
+        return List.of(
+            USER_CARD.USER_ID,
+            USER_CARD.CARD_ID,
+            USER_CARD.FAVORITE,
+            USER_CARD.LEARNED,
+            CARD.ID,
+            CARD.QUESTION,
+            CARD.ANSWER,
+            CARD.AUTHOR_ID,
+            CARD.CREATED_AT,
+            CARD.UPDATED_AT
+        );
+    }
 }

@@ -12,4 +12,11 @@ public class Utils {
         }
         return null;
     }
+
+    public static <T, R> R applyIfNotNull(T value, Function<T, R> function, R defaultValue) {
+        if (value != null) {
+            return function.apply(value);
+        }
+        return defaultValue;
+    }
 }

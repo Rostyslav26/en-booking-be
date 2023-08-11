@@ -1,6 +1,6 @@
 package com.website.enbookingbe.quiz;
 
-import com.website.enbookingbe.quiz.entity.Quiz;
+import com.website.enbookingbe.quiz.domain.Quiz;
 import com.website.enbookingbe.quiz.model.QuizInfo;
 import com.website.enbookingbe.quiz.resource.QuizCardResource;
 import com.website.enbookingbe.quiz.resource.QuizResource;
@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Nullable;
 import java.util.List;
+
+import static com.website.enbookingbe.quiz.converter.QuizResourceConverter.toResource;
 
 @RestController
 @RequestMapping("/quizzes")
@@ -25,7 +26,6 @@ import java.util.List;
 public class QuizController {
     private final QuizService quizService;
     private final QuizLearningService quizLearningService;
-    private final QuizMapper quizMapper = new QuizMapper();
 
     @PostMapping
     public QuizResource createQuiz(
@@ -34,17 +34,17 @@ public class QuizController {
     ) {
         final Quiz quiz = quizService.createQuiz(cardIds, user.getId());
 
-        return quizMapper.toResource(quiz, user.getId());
+        return toResource(quiz, user.getId());
     }
 
     @PostMapping("/not-learned")
     public QuizResource createQuizByNotLearnedCards(
-        @Nullable @RequestParam Integer limit,
+        @RequestParam Integer limit,
         @AuthenticationPrincipal Principal user
     ) {
         Quiz quiz = quizService.createQuizByNotLearnedCards(user.getId(), limit);
 
-        return quizMapper.toResource(quiz, user.getId());
+        return toResource(quiz, user.getId());
     }
 
     @GetMapping("/{quizId}")

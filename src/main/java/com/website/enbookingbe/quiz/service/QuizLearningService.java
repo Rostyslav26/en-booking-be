@@ -1,100 +1,105 @@
 package com.website.enbookingbe.quiz.service;
 
-import com.website.enbookingbe.card.Card;
-import com.website.enbookingbe.card.CardService;
-import com.website.enbookingbe.quiz.entity.Quiz;
-import com.website.enbookingbe.quiz.entity.QuizCard;
+import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.service.CardService;
+import com.website.enbookingbe.card.service.UserCardService;
+import com.website.enbookingbe.quiz.domain.Quiz;
+import com.website.enbookingbe.quiz.domain.QuizCard;
+import com.website.enbookingbe.quiz.domain.QuizCardStatus;
+import com.website.enbookingbe.quiz.domain.QuizStatus;
 import com.website.enbookingbe.quiz.exception.QuizCardNotFoundException;
-import com.website.enbookingbe.quiz.model.QuizCardStatus;
 import com.website.enbookingbe.quiz.model.QuizInfo;
-import com.website.enbookingbe.quiz.model.QuizStatus;
 import com.website.enbookingbe.quiz.repository.QuizCardRepository;
 import com.website.enbookingbe.quiz.resource.QuizCardResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.website.enbookingbe.quiz.model.QuizCardStatus.COMPLETED;
-import static com.website.enbookingbe.quiz.model.QuizCardStatus.FAILED;
-import static com.website.enbookingbe.quiz.model.QuizStatus.IN_PROGRESS;
+import static com.website.enbookingbe.quiz.domain.QuizCardStatus.COMPLETED;
+import static com.website.enbookingbe.quiz.domain.QuizCardStatus.FAILED;
+import static com.website.enbookingbe.quiz.domain.QuizStatus.IN_PROGRESS;
 import static java.util.Collections.emptyList;
 
 @Service
 @RequiredArgsConstructor
 public class QuizLearningService {
     private final CardService cardService;
+    private final UserCardService userCardService;
     private final QuizCardRepository quizCardRepository;
     private final QuizCardGenerator quizCardGenerator;
 
     public List<QuizCardResource> learnQuiz(Quiz quiz) {
-        resetQuizStatus(quiz, IN_PROGRESS);
+        quiz.setStatus(IN_PROGRESS);
 
-        final List<QuizCard> notCompletedQuizCards = getNotCompletedQuizCards(quiz);
+        final List<QuizCard> notCompletedQuizCards = quizCardRepository.findNotCompleted(quiz.getId());
 
         return quizCardGenerator.prepareQuizCardsToLearn(notCompletedQuizCards);
     }
 
-    private List<QuizCard> getNotCompletedQuizCards(Quiz quiz) {
-        return quiz.getQuizCards().stream()
-            .filter(qc -> !Objects.equals(qc.getStatus(), COMPLETED))
-            .toList();
-    }
-
     public List<QuizCardResource> relearnQuiz(Quiz quiz) {
-        resetQuizStatus(quiz, IN_PROGRESS);
+        quiz.setStatus(IN_PROGRESS);
 
-        return quizCardGenerator.prepareQuizCardsToLearn(quiz.getQuizCards());
+        List<QuizCard> quizCards = quizCardRepository.findAll(quiz.getId());
+
+        return quizCardGenerator.prepareQuizCardsToLearn(quizCards);
     }
 
     public void answerQuizCard(Quiz quiz, Integer cardId, boolean isCorrect, Integer userId) {
         checkQuizIsCompleted(quiz);
 
-        final QuizCard quizCard = quizCardRepository.findByQuizIdAndCardId(quiz.getId(), cardId)
+        final QuizCard quizCard = quizCardRepository.findOne(quiz.getId(), cardId)
             .orElseThrow(() -> new QuizCardNotFoundException(quiz.getId(), cardId));
 
-        checkQuizCardStatus(quizCard, COMPLETED);
+        checkState(quizCard.getStatus() == COMPLETED, "Quiz card should be in progress");
 
         final QuizCardStatus status = isCorrect ? COMPLETED : FAILED;
         quizCard.setStatus(status);
 
-        cardService.markAsLearned(cardId, isCorrect, userId);
+        userCardService.markAsLearned(cardId, userId, isCorrect);
     }
 
     public QuizInfo completeQuiz(Quiz quiz) {
         checkQuizIsCompleted(quiz);
 
-        final Map<QuizCardStatus, List<Card>> cardsByStatus = getCardsByStatus(quiz);
+        final List<QuizCard> quizCards = quizCardRepository.findAll(quiz.getId());
+        final Map<QuizCardStatus, List<CardV2>> cardsByStatus = getCardsByStatus(quizCards);
 
-        final Collection<Card> completedCards = cardsByStatus.getOrDefault(COMPLETED, emptyList());
-        if (completedCards.size() == quiz.getQuizCards().size()) {
-            resetQuizStatus(quiz, QuizStatus.COMPLETED);
+        if (isAllCardsCompleted(quizCards, cardsByStatus)) {
+            quiz.setStatus(QuizStatus.COMPLETED);
+        } else {
+            quiz.setStatus(QuizStatus.FAILED);
         }
 
         return new QuizInfo(quiz.getId(), cardsByStatus, quiz.getStatus());
     }
 
-    private Map<QuizCardStatus, List<Card>> getCardsByStatus(Quiz quiz) {
-        final List<Integer> cardIds = quiz.getQuizCards().stream()
-            .map(q -> q.getId().getCardId())
+    private boolean isAllCardsCompleted(
+        List<QuizCard> quizCards,
+        Map<QuizCardStatus, List<CardV2>> cardsByStatus
+    ) {
+        final List<CardV2> completedCards = cardsByStatus.getOrDefault(COMPLETED, emptyList());
+
+        return quizCards.size() == completedCards.size();
+    }
+
+    private Map<QuizCardStatus, List<CardV2>> getCardsByStatus(List<QuizCard> quizCards) {
+        final List<Integer> cardIds = quizCards.stream()
+            .map(QuizCard::getCardId)
             .toList();
 
-        final Map<Integer, Card> cardById = cardService.getByIds(cardIds).stream()
-            .collect(Collectors.toMap(Card::getId, Function.identity()));
+        final Map<Integer, CardV2> cardById = getCardsById(cardIds);
 
-        Map<QuizCardStatus, List<Card>> cardsByStatus = new HashMap<>();
-
-        for (QuizCard quizCard : quiz.getQuizCards()) {
+        Map<QuizCardStatus, List<CardV2>> cardsByStatus = new HashMap<>();
+        for (QuizCard quizCard : quizCards) {
             final QuizCardStatus quizCardStatus = quizCard.getStatus();
-            final Card card = cardById.get(quizCard.getId().getCardId());
+            final CardV2 card = cardById.get(quizCard.getCardId());
 
             cardsByStatus.computeIfAbsent(quizCardStatus, k -> new ArrayList<>()).add(card);
         }
@@ -102,15 +107,13 @@ public class QuizLearningService {
         return cardsByStatus;
     }
 
-    public void checkQuizCardStatus(QuizCard quizCard, QuizCardStatus status) {
-        checkState(quizCard.getStatus() == status, "Quiz card status is not %s", status);
+    private Map<Integer, CardV2> getCardsById(List<Integer> cardIds) {
+        return cardService.getByIds(cardIds).stream()
+            .collect(Collectors.toMap(CardV2::getId, Function.identity()));
     }
 
     public void checkQuizIsCompleted(Quiz quiz) {
         checkState(quiz.getStatus() == QuizStatus.COMPLETED, "Quiz is already completed");
     }
 
-    private void resetQuizStatus(Quiz quiz, QuizStatus status) {
-        quiz.setStatus(status);
-    }
 }

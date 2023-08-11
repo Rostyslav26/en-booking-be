@@ -1,8 +1,7 @@
 package com.website.enbookingbe.resolver;
 
 import com.website.enbookingbe.quiz.QuizService;
-import com.website.enbookingbe.quiz.entity.Quiz;
-import com.website.enbookingbe.quiz.exception.QuizNotFoundException;
+import com.website.enbookingbe.quiz.domain.Quiz;
 import com.website.enbookingbe.security.Principal;
 import com.website.enbookingbe.security.SecurityUtils;
 import com.website.enbookingbe.utils.Utils;
@@ -34,7 +33,6 @@ public class QuizParamResolver implements HandlerMethodArgumentResolver {
         Principal principal = SecurityUtils.getCurrentUser().orElseThrow();
         Integer quizId = Utils.applyIfNotNull(webRequest.getParameter("quizId"), Integer::parseInt);
 
-        return quizService.getQuizById(quizId, principal.getId())
-            .orElseThrow(() -> new QuizNotFoundException(quizId));
+        return quizService.getQuizById(quizId, principal.getId());
     }
 }

@@ -3,9 +3,10 @@ package com.website.enbookingbe.card.repository;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.website.enbookingbe.DBTest;
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import com.website.enbookingbe.card.domain.UserCard;
 import com.website.enbookingbe.utils.PageRequest;
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,13 +24,16 @@ class UserCardRepositoryTest {
     @Autowired
     private UserCardRepository userCardRepository;
 
+    @Autowired
+    private DSLContext dslContext;
+
     @Test
     @DataSet(value = {"datasets/user-card/cards.xml", "datasets/user/users.xml"})
     @ExpectedDataSet(value = "datasets/user-card/expected-stored-user-card.xml")
     void testSave() {
         final UserCard userCard = UserCard.builder()
             .userId(1)
-            .card(CardV2.builder().id(1).build())
+            .card(Card.builder().id(1).build())
             .build();
 
         UserCard actual = userCardRepository.save(userCard);
@@ -47,7 +51,7 @@ class UserCardRepositoryTest {
     void testUpdate() {
         final UserCard userCard = UserCard.builder()
             .userId(1)
-            .card(CardV2.builder().id(1).build())
+            .card(Card.builder().id(1).build())
             .favorite(false)
             .learned(false)
             .build();
@@ -58,7 +62,9 @@ class UserCardRepositoryTest {
     @Test
     @DataSet(value = {"datasets/user-card/cards.xml", "datasets/user/users.xml", "datasets/user-card/user-cards.xml"})
     void testFind() {
-        final Optional<UserCard> userCardOpt = userCardRepository.findById(1, 1);
+        final int userId = 1;
+        final int cardId = 1;
+        final Optional<UserCard> userCardOpt = userCardRepository.findById(userId, cardId);
 
         assertTrue(userCardOpt.isPresent());
 
@@ -69,7 +75,9 @@ class UserCardRepositoryTest {
     @Test
     @DataSet(value = {"datasets/user-card/cards.xml", "datasets/user/users.xml", "datasets/user-card/user-cards.xml"})
     void testFindAllByUserIdAndCardIds() {
-        final List<UserCard> result = userCardRepository.findAllByUserIdAndCardIds(1, List.of(1, 1));
+        final int userId = 1;
+        final int cardId = 1;
+        final List<UserCard> result = userCardRepository.findAllByUserIdAndCardIds(userId, List.of(cardId));
 
         assertThat(result).hasSize(1);
     }
@@ -89,11 +97,20 @@ class UserCardRepositoryTest {
     @DataSet(value = {"datasets/user-card/cards.xml", "datasets/user/users.xml", "datasets/user-card/user-cards.xml"})
     @ExpectedDataSet(value = "datasets/user-card/expected-removed-user-card.xml")
     void testRemove() {
-        userCardRepository.remove(1, 2);
+        final int userId = 1;
+        final int cardId = 2;
+        userCardRepository.remove(userId, cardId);
+
+        final int count = dslContext.fetchCount(
+            USER_CARD,
+            USER_CARD.USER_ID.eq(userId).and(USER_CARD.CARD_ID.eq(cardId))
+        );
+
+        assertThat(count).isZero();
     }
 
     private UserCard getExpectedUserCard() {
-        final CardV2 card = CardV2.builder()
+        final Card card = Card.builder()
             .id(1)
             .question("question1")
             .answer("answer1")

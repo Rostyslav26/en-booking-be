@@ -213,5 +213,6 @@ public class UserCardRecord extends UpdatableRecordImpl<UserCardRecord> implemen
         setUserId(userId);
         setLearned(learned);
         setFavorite(favorite);
+        resetChangedOnNotNull();
     }
 }

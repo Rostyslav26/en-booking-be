@@ -1,6 +1,6 @@
 package com.website.enbookingbe.card;
 
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 
 import java.time.LocalDateTime;
 
@@ -9,8 +9,8 @@ public class CardTestBuilder {
     private CardTestBuilder() {
     }
 
-    public static CardV2 getCard(LocalDateTime createdAt, String question, String answer) {
-        return CardV2.builder()
+    public static Card getCard(LocalDateTime createdAt, String question, String answer) {
+        return Card.builder()
             .id(1)
             .createdAt(createdAt)
             .updatedAt(createdAt)
@@ -20,8 +20,8 @@ public class CardTestBuilder {
             .build();
     }
 
-    public static CardV2 getCard(int cardId, LocalDateTime createdAt, String question, String answer) {
-        return CardV2.builder()
+    public static Card getCard(int cardId, LocalDateTime createdAt, String question, String answer) {
+        return Card.builder()
             .id(cardId)
             .createdAt(createdAt)
             .updatedAt(createdAt)

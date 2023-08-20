@@ -1,7 +1,11 @@
 <!ELEMENT dataset (
         card*,
-        usr*,
-        user_card*
+        users*,
+        user_card*,
+        quiz*,
+        role*,
+        user_role*,
+        quiz_card*
         )>
 
 <!ELEMENT card EMPTY>
@@ -14,8 +18,8 @@
         author_id CDATA #REQUIRED
         >
 
-<!ELEMENT usr EMPTY>
-<!ATTLIST usr
+<!ELEMENT users EMPTY>
+<!ATTLIST users
         id CDATA #REQUIRED
         first_name CDATA #REQUIRED
         last_name CDATA #REQUIRED
@@ -39,4 +43,31 @@
         user_id CDATA #REQUIRED
         learned CDATA #IMPLIED
         favorite CDATA #IMPLIED
+        >
+
+<!ELEMENT quiz_card EMPTY>
+<!ATTLIST quiz_card
+        card_id CDATA #REQUIRED
+        quiz_id CDATA #REQUIRED
+        status CDATA #REQUIRED
+        >
+
+<!ELEMENT quiz EMPTY>
+<!ATTLIST quiz
+        id CDATA #REQUIRED
+        user_id CDATA #REQUIRED
+        status CDATA #REQUIRED
+        created_at CDATA #IMPLIED
+        updated_at CDATA #IMPLIED
+        >
+
+<!ELEMENT role EMPTY>
+<!ATTLIST role
+        id CDATA #REQUIRED
+        >
+
+<!ELEMENT user_role EMPTY>
+<!ATTLIST user_role
+        user_id CDATA #REQUIRED
+        role_id CDATA #REQUIRED
         >

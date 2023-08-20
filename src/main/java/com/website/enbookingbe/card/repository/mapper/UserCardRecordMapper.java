@@ -1,6 +1,6 @@
 package com.website.enbookingbe.card.repository.mapper;
 
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import com.website.enbookingbe.card.domain.UserCard;
 import com.website.enbookingbe.data.jooq.tables.records.UserCardRecord;
 import org.jooq.Record;
@@ -37,8 +37,8 @@ public class UserCardRecordMapper implements RecordMapper<Record, UserCard>, Rec
             .build();
     }
 
-    private CardV2 toCard(Record record) {
-        return CardV2.builder()
+    private Card toCard(Record record) {
+        return Card.builder()
             .id(record.get(CARD.ID))
             .question(record.get(CARD.QUESTION))
             .answer(record.get(CARD.ANSWER))

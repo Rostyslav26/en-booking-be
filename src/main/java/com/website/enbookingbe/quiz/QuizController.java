@@ -63,7 +63,7 @@ public class QuizController {
         @RequestParam Integer cardId,
         @RequestParam boolean isCorrect,
         @AuthenticationPrincipal Principal user
-        ) {
+    ) {
         quizLearningService.answerQuizCard(quiz, cardId, isCorrect, user.getId());
     }
 

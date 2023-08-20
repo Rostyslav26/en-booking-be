@@ -58,12 +58,12 @@ public class Quiz extends TableImpl<QuizRecord> {
     /**
      * The column <code>public.quiz.created_at</code>.
      */
-    public final TableField<QuizRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
+    public final TableField<QuizRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>public.quiz.updated_at</code>.
      */
-    public final TableField<QuizRecord, LocalDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
+    public final TableField<QuizRecord, LocalDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "");
 
     private Quiz(Name alias, Table<QuizRecord> aliased) {
         this(alias, aliased, null);
@@ -118,16 +118,16 @@ public class Quiz extends TableImpl<QuizRecord> {
         return Arrays.asList(Keys.QUIZ__QUIZ_USER_ID_FKEY);
     }
 
-    private transient User _user;
+    private transient Users _users;
 
     /**
-     * Get the implicit join path to the <code>public.user</code> table.
+     * Get the implicit join path to the <code>public.users</code> table.
      */
-    public User user() {
-        if (_user == null)
-            _user = new User(this, Keys.QUIZ__QUIZ_USER_ID_FKEY);
+    public Users users() {
+        if (_users == null)
+            _users = new Users(this, Keys.QUIZ__QUIZ_USER_ID_FKEY);
 
-        return _user;
+        return _users;
     }
 
     @Override

@@ -1,0 +1,5 @@
+<!DOCTYPE dataset SYSTEM "src/test/resources/datasets/database.dtd">
+
+<dataset>
+    <user_role user_id="1" role_id="READER"/>
+</dataset>

@@ -8,9 +8,9 @@ import com.website.enbookingbe.data.jooq.tables.Card;
 import com.website.enbookingbe.data.jooq.tables.Quiz;
 import com.website.enbookingbe.data.jooq.tables.QuizCard;
 import com.website.enbookingbe.data.jooq.tables.Role;
-import com.website.enbookingbe.data.jooq.tables.User;
 import com.website.enbookingbe.data.jooq.tables.UserCard;
 import com.website.enbookingbe.data.jooq.tables.UserRole;
+import com.website.enbookingbe.data.jooq.tables.Users;
 import org.jooq.Catalog;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
@@ -53,11 +53,6 @@ public class Public extends SchemaImpl {
     public final Role ROLE = Role.ROLE;
 
     /**
-     * The table <code>public.user</code>.
-     */
-    public final User USER = User.USER;
-
-    /**
      * The table <code>public.user_card</code>.
      */
     public final UserCard USER_CARD = UserCard.USER_CARD;
@@ -66,6 +61,11 @@ public class Public extends SchemaImpl {
      * The table <code>public.user_role</code>.
      */
     public final UserRole USER_ROLE = UserRole.USER_ROLE;
+
+    /**
+     * The table <code>public.users</code>.
+     */
+    public final Users USERS = Users.USERS;
 
     /**
      * No further instances allowed
@@ -87,9 +87,9 @@ public class Public extends SchemaImpl {
             Quiz.QUIZ,
             QuizCard.QUIZ_CARD,
             Role.ROLE,
-            User.USER,
             UserCard.USER_CARD,
-            UserRole.USER_ROLE
+            UserRole.USER_ROLE,
+            Users.USERS
         );
     }
 }

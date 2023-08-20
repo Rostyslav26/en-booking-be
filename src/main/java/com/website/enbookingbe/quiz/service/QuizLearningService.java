@@ -1,6 +1,6 @@
 package com.website.enbookingbe.quiz.service;
 
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import com.website.enbookingbe.card.service.CardService;
 import com.website.enbookingbe.card.service.UserCardService;
 import com.website.enbookingbe.quiz.domain.Quiz;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -36,9 +36,12 @@ public class QuizLearningService {
     private final QuizCardGenerator quizCardGenerator;
 
     public List<QuizCardResource> learnQuiz(Quiz quiz) {
-        quiz.setStatus(IN_PROGRESS);
-
         final List<QuizCard> notCompletedQuizCards = quizCardRepository.findNotCompleted(quiz.getId());
+        if (notCompletedQuizCards.isEmpty()) {
+            return relearnQuiz(quiz);
+        }
+
+        quiz.setStatus(IN_PROGRESS);
 
         return quizCardGenerator.prepareQuizCardsToLearn(notCompletedQuizCards);
     }
@@ -46,7 +49,7 @@ public class QuizLearningService {
     public List<QuizCardResource> relearnQuiz(Quiz quiz) {
         quiz.setStatus(IN_PROGRESS);
 
-        List<QuizCard> quizCards = quizCardRepository.findAll(quiz.getId());
+        List<QuizCard> quizCards = quizCardRepository.findAllByQuizId(quiz.getId());
 
         return quizCardGenerator.prepareQuizCardsToLearn(quizCards);
     }
@@ -68,8 +71,8 @@ public class QuizLearningService {
     public QuizInfo completeQuiz(Quiz quiz) {
         checkQuizIsCompleted(quiz);
 
-        final List<QuizCard> quizCards = quizCardRepository.findAll(quiz.getId());
-        final Map<QuizCardStatus, List<CardV2>> cardsByStatus = getCardsByStatus(quizCards);
+        final List<QuizCard> quizCards = quizCardRepository.findAllByQuizId(quiz.getId());
+        final Map<QuizCardStatus, List<Card>> cardsByStatus = getCardsByStatus(quizCards);
 
         if (isAllCardsCompleted(quizCards, cardsByStatus)) {
             quiz.setStatus(QuizStatus.COMPLETED);
@@ -82,24 +85,24 @@ public class QuizLearningService {
 
     private boolean isAllCardsCompleted(
         List<QuizCard> quizCards,
-        Map<QuizCardStatus, List<CardV2>> cardsByStatus
+        Map<QuizCardStatus, List<Card>> cardsByStatus
     ) {
-        final List<CardV2> completedCards = cardsByStatus.getOrDefault(COMPLETED, emptyList());
+        final List<Card> completedCards = cardsByStatus.getOrDefault(COMPLETED, emptyList());
 
         return quizCards.size() == completedCards.size();
     }
 
-    private Map<QuizCardStatus, List<CardV2>> getCardsByStatus(List<QuizCard> quizCards) {
+    private Map<QuizCardStatus, List<Card>> getCardsByStatus(List<QuizCard> quizCards) {
         final List<Integer> cardIds = quizCards.stream()
             .map(QuizCard::getCardId)
             .toList();
 
-        final Map<Integer, CardV2> cardById = getCardsById(cardIds);
+        final Map<Integer, Card> cardById = getCardsById(cardIds);
 
-        Map<QuizCardStatus, List<CardV2>> cardsByStatus = new HashMap<>();
+        Map<QuizCardStatus, List<Card>> cardsByStatus = new EnumMap<>(QuizCardStatus.class);
         for (QuizCard quizCard : quizCards) {
             final QuizCardStatus quizCardStatus = quizCard.getStatus();
-            final CardV2 card = cardById.get(quizCard.getCardId());
+            final Card card = cardById.get(quizCard.getCardId());
 
             cardsByStatus.computeIfAbsent(quizCardStatus, k -> new ArrayList<>()).add(card);
         }
@@ -107,13 +110,12 @@ public class QuizLearningService {
         return cardsByStatus;
     }
 
-    private Map<Integer, CardV2> getCardsById(List<Integer> cardIds) {
+    private Map<Integer, Card> getCardsById(List<Integer> cardIds) {
         return cardService.getByIds(cardIds).stream()
-            .collect(Collectors.toMap(CardV2::getId, Function.identity()));
+            .collect(Collectors.toMap(Card::getId, Function.identity()));
     }
 
     public void checkQuizIsCompleted(Quiz quiz) {
         checkState(quiz.getStatus() == QuizStatus.COMPLETED, "Quiz is already completed");
     }
-
 }

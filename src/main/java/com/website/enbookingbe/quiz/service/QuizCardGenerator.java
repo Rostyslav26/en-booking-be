@@ -1,6 +1,6 @@
 package com.website.enbookingbe.quiz.service;
 
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import com.website.enbookingbe.card.service.CardService;
 import com.website.enbookingbe.quiz.domain.QuizCard;
 import com.website.enbookingbe.quiz.domain.QuizCardStatus;
@@ -24,7 +24,7 @@ public class QuizCardGenerator {
             .map(QuizCard::getCardId)
             .toList();
 
-        final List<CardV2> cards = cardService.getByIds(cardIds);
+        final List<Card> cards = cardService.getByIds(cardIds);
         Collections.shuffle(cards);
 
         return cards.stream()
@@ -36,7 +36,7 @@ public class QuizCardGenerator {
         quizCard.setStatus(QuizCardStatus.COMPLETED);
     }
 
-    private QuizCardResource toQuizCardResource(CardV2 card) {
+    private QuizCardResource toQuizCardResource(Card card) {
         final String prompt = PromptGenerator.generatePrompt(card.getAnswer());
 
         return new QuizCardResource(card.getId(), card.getQuestion(), card.getAnswer(), prompt);

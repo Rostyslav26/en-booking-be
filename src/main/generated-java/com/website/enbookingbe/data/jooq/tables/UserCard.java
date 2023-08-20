@@ -108,7 +108,7 @@ public class UserCard extends TableImpl<UserCardRecord> {
     }
 
     private transient Card _card;
-    private transient User _user;
+    private transient Users _users;
 
     /**
      * Get the implicit join path to the <code>public.card</code> table.
@@ -121,13 +121,13 @@ public class UserCard extends TableImpl<UserCardRecord> {
     }
 
     /**
-     * Get the implicit join path to the <code>public.user</code> table.
+     * Get the implicit join path to the <code>public.users</code> table.
      */
-    public User user() {
-        if (_user == null)
-            _user = new User(this, Keys.USER_CARD__USER_CARD_USER_ID_FKEY);
+    public Users users() {
+        if (_users == null)
+            _users = new Users(this, Keys.USER_CARD__USER_CARD_USER_ID_FKEY);
 
-        return _user;
+        return _users;
     }
 
     @Override

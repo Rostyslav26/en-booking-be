@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 @Component
 @Slf4j
@@ -36,11 +35,11 @@ public class DomainUserDetailsService implements UserDetailsService {
             .id(user.getId())
             .username(user.getEmail())
             .password(user.getPassword())
-            .authorities(getRoles(user.getRoles()))
+            .authorities(toAuthorities(user.getRoles()))
             .build();
     }
 
-    private List<SimpleGrantedAuthority> getRoles(Set<Role> roles) {
+    private List<SimpleGrantedAuthority> toAuthorities(List<Role> roles) {
         return roles.stream()
             .map(Role::getId)
             .map(SimpleGrantedAuthority::new)

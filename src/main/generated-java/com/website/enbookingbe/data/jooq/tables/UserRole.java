@@ -97,17 +97,17 @@ public class UserRole extends TableImpl<UserRoleRecord> {
         return Arrays.asList(Keys.USER_ROLE__USER_ROLE_USER_ID_FKEY, Keys.USER_ROLE__USER_ROLE_ROLE_ID_FKEY);
     }
 
-    private transient User _user;
+    private transient Users _users;
     private transient Role _role;
 
     /**
-     * Get the implicit join path to the <code>public.user</code> table.
+     * Get the implicit join path to the <code>public.users</code> table.
      */
-    public User user() {
-        if (_user == null)
-            _user = new User(this, Keys.USER_ROLE__USER_ROLE_USER_ID_FKEY);
+    public Users users() {
+        if (_users == null)
+            _users = new Users(this, Keys.USER_ROLE__USER_ROLE_USER_ID_FKEY);
 
-        return _user;
+        return _users;
     }
 
     /**

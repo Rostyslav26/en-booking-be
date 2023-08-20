@@ -63,12 +63,12 @@ public class Card extends TableImpl<CardRecord> {
     /**
      * The column <code>public.card.created_at</code>.
      */
-    public final TableField<CardRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field("now()", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<CardRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>public.card.updated_at</code>.
      */
-    public final TableField<CardRecord, LocalDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field("now()", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<CardRecord, LocalDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "");
 
     private Card(Name alias, Table<CardRecord> aliased) {
         this(alias, aliased, null);
@@ -123,16 +123,16 @@ public class Card extends TableImpl<CardRecord> {
         return Arrays.asList(Keys.CARD__CARD_AUTHOR_ID_FKEY);
     }
 
-    private transient User _user;
+    private transient Users _users;
 
     /**
-     * Get the implicit join path to the <code>public.user</code> table.
+     * Get the implicit join path to the <code>public.users</code> table.
      */
-    public User user() {
-        if (_user == null)
-            _user = new User(this, Keys.CARD__CARD_AUTHOR_ID_FKEY);
+    public Users users() {
+        if (_users == null)
+            _users = new Users(this, Keys.CARD__CARD_AUTHOR_ID_FKEY);
 
-        return _user;
+        return _users;
     }
 
     @Override

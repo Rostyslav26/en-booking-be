@@ -27,12 +27,11 @@ public class QuizRepository {
     }
 
     public Quiz save(Quiz quiz) {
-        final QuizRecord record = mapper.unmap(quiz);
+        final QuizRecord quizRecord = dsl.newRecord(QUIZ, mapper.unmap(quiz));
 
-        dsl.insertInto(QUIZ)
-            .set(record)
-            .execute();
-
-        return mapper.map(record);
+        return dsl.insertInto(QUIZ)
+            .set(quizRecord)
+            .returning(QUIZ.asterisk())
+            .fetchOne(mapper);
     }
 }

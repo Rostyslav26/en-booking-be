@@ -8,9 +8,9 @@ import com.website.enbookingbe.data.jooq.tables.Card;
 import com.website.enbookingbe.data.jooq.tables.Quiz;
 import com.website.enbookingbe.data.jooq.tables.QuizCard;
 import com.website.enbookingbe.data.jooq.tables.Role;
-import com.website.enbookingbe.data.jooq.tables.User;
 import com.website.enbookingbe.data.jooq.tables.UserCard;
 import com.website.enbookingbe.data.jooq.tables.UserRole;
+import com.website.enbookingbe.data.jooq.tables.Users;
 
 
 /**
@@ -40,11 +40,6 @@ public class Tables {
     public static final Role ROLE = Role.ROLE;
 
     /**
-     * The table <code>public.user</code>.
-     */
-    public static final User USER = User.USER;
-
-    /**
      * The table <code>public.user_card</code>.
      */
     public static final UserCard USER_CARD = UserCard.USER_CARD;
@@ -53,4 +48,9 @@ public class Tables {
      * The table <code>public.user_role</code>.
      */
     public static final UserRole USER_ROLE = UserRole.USER_ROLE;
+
+    /**
+     * The table <code>public.users</code>.
+     */
+    public static final Users USERS = Users.USERS;
 }

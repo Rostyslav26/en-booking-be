@@ -289,5 +289,6 @@ public class CardRecord extends UpdatableRecordImpl<CardRecord> implements Recor
         setAuthorId(authorId);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        resetChangedOnNotNull();
     }
 }

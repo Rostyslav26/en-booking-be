@@ -1,6 +1,6 @@
 package com.website.enbookingbe.card.service;
 
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import com.website.enbookingbe.card.domain.UserCard;
 import com.website.enbookingbe.card.repository.UserCardRepository;
 import com.website.enbookingbe.card.resource.CreateCardResource;
@@ -41,7 +41,7 @@ class UserCardServiceTest {
 
     @Test
     void testCreate() {
-        final CardV2 card = getCard(LocalDateTime.now(), "question", "answer");
+        final Card card = getCard(LocalDateTime.now(), "question", "answer");
         final CreateCardResource dto = new CreateCardResource("question", "answer");
         final Integer userId = 1;
 
@@ -61,7 +61,7 @@ class UserCardServiceTest {
         final Integer userId = 1;
         final Integer cardId = 1;
 
-        final CardV2 card = getCard(dateTime, "question", "answer");
+        final Card card = getCard(dateTime, "question", "answer");
         UserCard expected = getUserCard(userId, card);
         when(userCardRepository.findById(userId, cardId)).thenReturn(Optional.of(expected));
         when(cardService.update(any())).thenReturn(card);
@@ -95,12 +95,12 @@ class UserCardServiceTest {
         final Integer userId = 1;
         final Integer cardIdForCopy = 1;
 
-        final CardV2 card = getCard(LocalDateTime.now(), "question", "answer");
+        final Card card = getCard(LocalDateTime.now(), "question", "answer");
         final UserCard userCard = getUserCard(userId, card);
 
         final ArgumentCaptor<UserCard> userCardCaptor = ArgumentCaptor.forClass(UserCard.class);
 
-        final CardV2 expectedCard = getCard(2, LocalDateTime.now(), "question", "answer");
+        final Card expectedCard = getCard(2, LocalDateTime.now(), "question", "answer");
         when(cardService.getById(cardIdForCopy)).thenReturn(card);
         when(cardService.createNewCard(any(), any(), any()))
             .thenReturn(expectedCard);
@@ -189,7 +189,7 @@ class UserCardServiceTest {
 
     @Test
     void testGetAllByUserId() {
-        CardV2 card = getCard(LocalDateTime.now(), "question", "answer");
+        Card card = getCard(LocalDateTime.now(), "question", "answer");
         final Integer userId = 1;
 
         final List<UserCard> expected = List.of(UserCard.builder().userId(userId).card(card).build());
@@ -206,9 +206,9 @@ class UserCardServiceTest {
         Integer userId = 1;
         List<Integer> cardIds = List.of(1, 2, 3);
 
-        CardV2 card1 = getCard(1, LocalDateTime.now(), "question1", "answer1");
-        CardV2 card2 = getCard(2, LocalDateTime.now(), "question2", "answer2");
-        CardV2 card3 = getCard(3, LocalDateTime.now(), "question3", "answer3");
+        Card card1 = getCard(1, LocalDateTime.now(), "question1", "answer1");
+        Card card2 = getCard(2, LocalDateTime.now(), "question2", "answer2");
+        Card card3 = getCard(3, LocalDateTime.now(), "question3", "answer3");
 
         List<UserCard> expected = List.of(
             getUserCard(userId, card1),
@@ -240,7 +240,7 @@ class UserCardServiceTest {
         assertThat(actual).usingRecursiveComparison().isEqualTo(expectedCards);
     }
 
-    private UserCard getUserCard(Integer userId, CardV2 card) {
+    private UserCard getUserCard(Integer userId, Card card) {
         return UserCard.builder()
             .userId(userId)
             .card(card)

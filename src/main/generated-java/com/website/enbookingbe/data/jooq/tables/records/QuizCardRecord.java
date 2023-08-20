@@ -176,5 +176,6 @@ public class QuizCardRecord extends UpdatableRecordImpl<QuizCardRecord> implemen
         setQuizId(quizId);
         setCardId(cardId);
         setStatus(status);
+        resetChangedOnNotNull();
     }
 }

@@ -252,5 +252,6 @@ public class QuizRecord extends UpdatableRecordImpl<QuizRecord> implements Recor
         setStatus(status);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        resetChangedOnNotNull();
     }
 }

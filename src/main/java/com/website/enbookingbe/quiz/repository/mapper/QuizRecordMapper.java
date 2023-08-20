@@ -32,7 +32,6 @@ public class QuizRecordMapper implements RecordMapper<Record, Quiz>, RecordUnmap
         quizRecord.setUserId(source.getUserId());
         quizRecord.setStatus(source.getStatus().name());
         quizRecord.setCreatedAt(source.getCreatedAt());
-        quizRecord.setUpdatedAt(source.getUpdatedAt());
 
         return quizRecord;
     }

@@ -1,1 +1,1 @@
-ALTER TABLE quiz_card ADD COLUMN status VARCHAR(10);
+ALTER TABLE quiz_card ADD COLUMN status VARCHAR(15);

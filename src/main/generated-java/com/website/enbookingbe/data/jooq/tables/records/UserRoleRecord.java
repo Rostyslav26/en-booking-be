@@ -138,5 +138,6 @@ public class UserRoleRecord extends UpdatableRecordImpl<UserRoleRecord> implemen
 
         setUserId(userId);
         setRoleId(roleId);
+        resetChangedOnNotNull();
     }
 }

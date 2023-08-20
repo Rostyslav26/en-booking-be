@@ -1,7 +1,6 @@
 package com.website.enbookingbe.management;
 
 import com.website.enbookingbe.exception.NotFoundException;
-import com.website.enbookingbe.management.domain.Role;
 import com.website.enbookingbe.management.domain.User;
 import com.website.enbookingbe.management.exception.UserAlreadyExistsException;
 import com.website.enbookingbe.management.repository.RoleRepository;
@@ -12,9 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import static com.website.enbookingbe.data.jooq.Tables.USERS;
 
-import static com.website.enbookingbe.data.jooq.tables.User.USER;
 
 @Service
 @Transactional
@@ -32,12 +30,7 @@ public class UserService {
         }
 
         final User user = userRepository.save(userMapper.toNewUser(resource));
-
-        final List<String> roleIds = user.getRoles().stream()
-            .map(Role::getId)
-            .toList();
-
-        roleRepository.save(user.getId(), roleIds);
+        roleRepository.save(user.getId(), user.getRoles());
 
         return user;
     }
@@ -49,7 +42,7 @@ public class UserService {
         user.setActivated(true);
         user.setActivationKey(null);
 
-        userRepository.update(user, USER.ACTIVATED, USER.ACTIVATION_KEY);
+        userRepository.update(user, USERS.ACTIVATED, USERS.ACTIVATION_KEY);
 
         log.debug("User '{}' has been activated", user.getEmail());
     }

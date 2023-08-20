@@ -1,6 +1,6 @@
 package com.website.enbookingbe.quiz;
 
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import com.website.enbookingbe.card.domain.UserCard;
 import com.website.enbookingbe.card.service.UserCardService;
 import com.website.enbookingbe.exception.NotFoundException;
@@ -58,7 +58,7 @@ public class QuizService {
         final Quiz savedQuiz = quizRepository.save(quiz);
 
         final List<QuizCard> quizCards = userCards.stream()
-            .map(userCard -> toQuizCard(savedQuiz, userCard.getCard()))
+            .map(userCard -> toNewQuizCard(savedQuiz, userCard.getCard()))
             .toList();
 
         quizCardRepository.saveAll(quizCards);
@@ -66,7 +66,7 @@ public class QuizService {
         return savedQuiz;
     }
 
-    private QuizCard toQuizCard(Quiz quiz, CardV2 card) {
+    private QuizCard toNewQuizCard(Quiz quiz, Card card) {
         return QuizCard.builder()
             .quizId(quiz.getId())
             .cardId(card.getId())

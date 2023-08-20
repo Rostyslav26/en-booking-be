@@ -3,7 +3,7 @@ package com.website.enbookingbe.card.repository;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.website.enbookingbe.DBTest;
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,13 +24,13 @@ class CardRepositoryTest {
     @DataSet("datasets/user/users.xml")
     @ExpectedDataSet(value = "datasets/card/expected-stored-card.xml", ignoreCols = {"created_at", "updated_at"})
     void testSaveCard() {
-        CardV2 card = CardV2.builder()
+        Card card = Card.builder()
             .question("question")
             .answer("answer")
             .authorId(1)
             .build();
 
-        CardV2 actual = cardRepository.save(card);
+        Card actual = cardRepository.save(card);
         assertEquals(1, actual.getId());
         assertNotNull(actual.getCreatedAt());
         assertNotNull(actual.getUpdatedAt());
@@ -40,7 +40,7 @@ class CardRepositoryTest {
     @DataSet(value = {"datasets/user/users.xml", "datasets/card/cards.xml"})
     @ExpectedDataSet(value = "datasets/card/expected-updated-card.xml", ignoreCols = {"created_at", "updated_at"})
     void testUpdateCard() {
-        CardV2 card = CardV2.builder()
+        Card card = Card.builder()
             .id(1)
             .question("updated question")
             .answer("updated answer")
@@ -53,7 +53,7 @@ class CardRepositoryTest {
     @Test
     @DataSet(value = {"datasets/user/users.xml", "datasets/card/cards.xml"})
     void testFindById() {
-        CardV2 card = cardRepository.findById(1).orElse(null);
+        Card card = cardRepository.findById(1).orElse(null);
 
         assertNotNull(card);
         assertThat(card).usingRecursiveComparison().isEqualTo(getExpectedCard(1));
@@ -62,13 +62,13 @@ class CardRepositoryTest {
     @Test
     @DataSet(value = {"datasets/user/users.xml", "datasets/card/cards.xml"})
     void testFindAllByIds() {
-        List<CardV2> cards = cardRepository.findAllByIds(List.of(1, 2));
+        List<Card> cards = cardRepository.findAllByIds(List.of(1, 2));
 
         assertThat(cards).usingRecursiveComparison().isEqualTo(List.of(getExpectedCard(1), getExpectedCard(2)));
     }
 
-    private CardV2 getExpectedCard(Integer id) {
-        CardV2 card = CardV2.builder()
+    private Card getExpectedCard(Integer id) {
+        Card card = Card.builder()
             .id(id)
             .question("question" + id)
             .answer("answer" + id)

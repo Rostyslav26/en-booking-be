@@ -1,0 +1,6 @@
+<!DOCTYPE dataset SYSTEM "src/test/resources/datasets/database.dtd">
+
+<dataset>
+    <quiz_card card_id="1" quiz_id="1" status="COMPLETED"/>
+    <quiz_card card_id="2" quiz_id="1" status="NEW"/>
+</dataset>

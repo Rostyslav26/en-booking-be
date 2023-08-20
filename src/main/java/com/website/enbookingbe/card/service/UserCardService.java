@@ -1,6 +1,6 @@
 package com.website.enbookingbe.card.service;
 
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import com.website.enbookingbe.card.domain.UserCard;
 import com.website.enbookingbe.card.repository.UserCardRepository;
 import com.website.enbookingbe.card.resource.CreateCardResource;
@@ -23,7 +23,7 @@ public class UserCardService {
     private final CardService cardService;
 
     public UserCard create(CreateCardResource dto, Integer userId) {
-        final CardV2 card = cardService.createNewCard(dto.question(), dto.answer(), userId);
+        final Card card = cardService.createNewCard(dto.question(), dto.answer(), userId);
 
         final UserCard userCard = UserCard.builder()
             .card(card)
@@ -36,11 +36,11 @@ public class UserCardService {
     public UserCard update(Integer cardId, UpdateCardResource dto, Integer userId) {
         final UserCard userCard = getUserCard(userId, cardId);
 
-        final CardV2 card = userCard.getCard();
+        final Card card = userCard.getCard();
         card.setAnswer(dto.answer());
         card.setQuestion(dto.question());
 
-        CardV2 updatedCard = cardService.update(card);
+        Card updatedCard = cardService.update(card);
         userCard.setCard(updatedCard);
 
         return userCard;
@@ -69,9 +69,9 @@ public class UserCardService {
     }
 
     public void copyCardToUser(Integer cardId, Integer userId) {
-        CardV2 card = cardService.getById(cardId);
+        Card card = cardService.getById(cardId);
 
-        CardV2 copiedCard = cardService.createNewCard(card.getQuestion(), card.getAnswer(), userId);
+        Card copiedCard = cardService.createNewCard(card.getQuestion(), card.getAnswer(), userId);
 
         final UserCard userCard = UserCard.builder()
             .card(copiedCard)

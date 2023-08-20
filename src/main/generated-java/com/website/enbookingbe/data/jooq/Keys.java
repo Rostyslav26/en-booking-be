@@ -8,16 +8,16 @@ import com.website.enbookingbe.data.jooq.tables.Card;
 import com.website.enbookingbe.data.jooq.tables.Quiz;
 import com.website.enbookingbe.data.jooq.tables.QuizCard;
 import com.website.enbookingbe.data.jooq.tables.Role;
-import com.website.enbookingbe.data.jooq.tables.User;
 import com.website.enbookingbe.data.jooq.tables.UserCard;
 import com.website.enbookingbe.data.jooq.tables.UserRole;
+import com.website.enbookingbe.data.jooq.tables.Users;
 import com.website.enbookingbe.data.jooq.tables.records.CardRecord;
 import com.website.enbookingbe.data.jooq.tables.records.QuizCardRecord;
 import com.website.enbookingbe.data.jooq.tables.records.QuizRecord;
 import com.website.enbookingbe.data.jooq.tables.records.RoleRecord;
 import com.website.enbookingbe.data.jooq.tables.records.UserCardRecord;
-import com.website.enbookingbe.data.jooq.tables.records.UserRecord;
 import com.website.enbookingbe.data.jooq.tables.records.UserRoleRecord;
+import com.website.enbookingbe.data.jooq.tables.records.UsersRecord;
 import org.jooq.ForeignKey;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -40,20 +40,20 @@ public class Keys {
     public static final UniqueKey<QuizRecord> QUIZ_PKEY = Internal.createUniqueKey(Quiz.QUIZ, DSL.name("quiz_pkey"), new TableField[] { Quiz.QUIZ.ID }, true);
     public static final UniqueKey<QuizCardRecord> QUIZ_CARD_PKEY = Internal.createUniqueKey(QuizCard.QUIZ_CARD, DSL.name("quiz_card_pkey"), new TableField[] { QuizCard.QUIZ_CARD.QUIZ_ID, QuizCard.QUIZ_CARD.CARD_ID }, true);
     public static final UniqueKey<RoleRecord> ROLE_PKEY = Internal.createUniqueKey(Role.ROLE, DSL.name("role_pkey"), new TableField[] { Role.ROLE.ID }, true);
-    public static final UniqueKey<UserRecord> USER_PKEY = Internal.createUniqueKey(User.USER, DSL.name("user_pkey"), new TableField[] { User.USER.ID }, true);
     public static final UniqueKey<UserCardRecord> USER_CARD_PKEY = Internal.createUniqueKey(UserCard.USER_CARD, DSL.name("user_card_pkey"), new TableField[] { UserCard.USER_CARD.CARD_ID, UserCard.USER_CARD.USER_ID }, true);
     public static final UniqueKey<UserRoleRecord> USER_ROLE_PKEY = Internal.createUniqueKey(UserRole.USER_ROLE, DSL.name("user_role_pkey"), new TableField[] { UserRole.USER_ROLE.USER_ID, UserRole.USER_ROLE.ROLE_ID }, true);
+    public static final UniqueKey<UsersRecord> USERS_PKEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_pkey"), new TableField[] { Users.USERS.ID }, true);
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<CardRecord, UserRecord> CARD__CARD_AUTHOR_ID_FKEY = Internal.createForeignKey(Card.CARD, DSL.name("card_author_id_fkey"), new TableField[] { Card.CARD.AUTHOR_ID }, Keys.USER_PKEY, new TableField[] { User.USER.ID }, true);
-    public static final ForeignKey<QuizRecord, UserRecord> QUIZ__QUIZ_USER_ID_FKEY = Internal.createForeignKey(Quiz.QUIZ, DSL.name("quiz_user_id_fkey"), new TableField[] { Quiz.QUIZ.USER_ID }, Keys.USER_PKEY, new TableField[] { User.USER.ID }, true);
+    public static final ForeignKey<CardRecord, UsersRecord> CARD__CARD_AUTHOR_ID_FKEY = Internal.createForeignKey(Card.CARD, DSL.name("card_author_id_fkey"), new TableField[] { Card.CARD.AUTHOR_ID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.ID }, true);
+    public static final ForeignKey<QuizRecord, UsersRecord> QUIZ__QUIZ_USER_ID_FKEY = Internal.createForeignKey(Quiz.QUIZ, DSL.name("quiz_user_id_fkey"), new TableField[] { Quiz.QUIZ.USER_ID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.ID }, true);
     public static final ForeignKey<QuizCardRecord, CardRecord> QUIZ_CARD__QUIZ_CARD_CARD_ID_FKEY = Internal.createForeignKey(QuizCard.QUIZ_CARD, DSL.name("quiz_card_card_id_fkey"), new TableField[] { QuizCard.QUIZ_CARD.CARD_ID }, Keys.CARD_PKEY, new TableField[] { Card.CARD.ID }, true);
     public static final ForeignKey<QuizCardRecord, QuizRecord> QUIZ_CARD__QUIZ_CARD_QUIZ_ID_FKEY = Internal.createForeignKey(QuizCard.QUIZ_CARD, DSL.name("quiz_card_quiz_id_fkey"), new TableField[] { QuizCard.QUIZ_CARD.QUIZ_ID }, Keys.QUIZ_PKEY, new TableField[] { Quiz.QUIZ.ID }, true);
     public static final ForeignKey<UserCardRecord, CardRecord> USER_CARD__USER_CARD_CARD_ID_FKEY = Internal.createForeignKey(UserCard.USER_CARD, DSL.name("user_card_card_id_fkey"), new TableField[] { UserCard.USER_CARD.CARD_ID }, Keys.CARD_PKEY, new TableField[] { Card.CARD.ID }, true);
-    public static final ForeignKey<UserCardRecord, UserRecord> USER_CARD__USER_CARD_USER_ID_FKEY = Internal.createForeignKey(UserCard.USER_CARD, DSL.name("user_card_user_id_fkey"), new TableField[] { UserCard.USER_CARD.USER_ID }, Keys.USER_PKEY, new TableField[] { User.USER.ID }, true);
+    public static final ForeignKey<UserCardRecord, UsersRecord> USER_CARD__USER_CARD_USER_ID_FKEY = Internal.createForeignKey(UserCard.USER_CARD, DSL.name("user_card_user_id_fkey"), new TableField[] { UserCard.USER_CARD.USER_ID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.ID }, true);
     public static final ForeignKey<UserRoleRecord, RoleRecord> USER_ROLE__USER_ROLE_ROLE_ID_FKEY = Internal.createForeignKey(UserRole.USER_ROLE, DSL.name("user_role_role_id_fkey"), new TableField[] { UserRole.USER_ROLE.ROLE_ID }, Keys.ROLE_PKEY, new TableField[] { Role.ROLE.ID }, true);
-    public static final ForeignKey<UserRoleRecord, UserRecord> USER_ROLE__USER_ROLE_USER_ID_FKEY = Internal.createForeignKey(UserRole.USER_ROLE, DSL.name("user_role_user_id_fkey"), new TableField[] { UserRole.USER_ROLE.USER_ID }, Keys.USER_PKEY, new TableField[] { User.USER.ID }, true);
+    public static final ForeignKey<UserRoleRecord, UsersRecord> USER_ROLE__USER_ROLE_USER_ID_FKEY = Internal.createForeignKey(UserRole.USER_ROLE, DSL.name("user_role_user_id_fkey"), new TableField[] { UserRole.USER_ROLE.USER_ID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.ID }, true);
 }

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class CardV2 {
+public class Card {
     private Integer id;
     private String question;
     private String answer;

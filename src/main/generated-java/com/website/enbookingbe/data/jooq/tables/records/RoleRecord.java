@@ -101,5 +101,6 @@ public class RoleRecord extends UpdatableRecordImpl<RoleRecord> implements Recor
         super(Role.ROLE);
 
         setId(id);
+        resetChangedOnNotNull();
     }
 }

@@ -52,7 +52,7 @@ public class QuizCard extends TableImpl<QuizCardRecord> {
     /**
      * The column <code>public.quiz_card.status</code>.
      */
-    public final TableField<QuizCardRecord, String> STATUS = createField(DSL.name("status"), SQLDataType.VARCHAR(10), this, "");
+    public final TableField<QuizCardRecord, String> STATUS = createField(DSL.name("status"), SQLDataType.VARCHAR(15), this, "");
 
     private QuizCard(Name alias, Table<QuizCardRecord> aliased) {
         this(alias, aliased, null);

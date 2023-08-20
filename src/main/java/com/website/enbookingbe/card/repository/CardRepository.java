@@ -1,7 +1,6 @@
 package com.website.enbookingbe.card.repository;
 
-import com.google.common.collect.ImmutableList;
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import com.website.enbookingbe.card.repository.mapper.CardRecordMapper;
 import com.website.enbookingbe.data.jooq.tables.records.CardRecord;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ public class CardRepository {
     private final DSLContext dsl;
     private final CardRecordMapper mapper = new CardRecordMapper();
 
-    public CardV2 save(CardV2 card) {
+    public Card save(Card card) {
         return dsl.insertInto(CARD)
             .set(CARD.QUESTION, card.getQuestion())
             .set(CARD.ANSWER, card.getAnswer())
@@ -30,32 +29,27 @@ public class CardRepository {
             .fetchOne(mapper);
     }
 
-    public CardV2 update(CardV2 card) {
+    public Card update(Card card) {
         return update(card, CARD.QUESTION, CARD.ANSWER);
     }
 
-    public CardV2 update(CardV2 card, Field<?>... fields) {
-        var storeFields = ImmutableList.<Field<?>>builder()
-            .add(fields)
-            .add(CARD.UPDATED_AT)
-            .build();
-
+    public Card update(Card card, Field<?>... fields) {
         CardRecord cardRecord = dsl.newRecord(CARD, mapper.unmap(card));
         cardRecord.setUpdatedAt(LocalDateTime.now());
 
-        cardRecord.update(storeFields);
+        cardRecord.update(fields);
 
         return mapper.map(cardRecord);
     }
 
-    public Optional<CardV2> findById(Integer id) {
+    public Optional<Card> findById(Integer id) {
         return dsl.select(CARD.fields())
             .from(CARD)
             .where(CARD.ID.eq(id))
             .fetchOptional(mapper);
     }
 
-    public List<CardV2> findAllByIds(List<Integer> ids) {
+    public List<Card> findAllByIds(List<Integer> ids) {
         return dsl.select(CARD.fields())
             .from(CARD)
             .where(CARD.ID.in(ids))

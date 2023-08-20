@@ -1,6 +1,6 @@
 package com.website.enbookingbe.card.service;
 
-import com.website.enbookingbe.card.domain.CardV2;
+import com.website.enbookingbe.card.domain.Card;
 import com.website.enbookingbe.card.repository.CardRepository;
 import com.website.enbookingbe.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
@@ -30,11 +30,11 @@ class CardServiceTest {
 
     @Test
     void testCreateNewCard() {
-        final CardV2 card = getCard(LocalDateTime.now(), "question", "answer");
+        final Card card = getCard(LocalDateTime.now(), "question", "answer");
 
         when(cardRepository.save(any())).thenReturn(card);
 
-        final CardV2 actual = cardService.createNewCard(card.getQuestion(), card.getAnswer(), card.getAuthorId());
+        final Card actual = cardService.createNewCard(card.getQuestion(), card.getAnswer(), card.getAuthorId());
 
         assertThat(actual).usingRecursiveComparison().isEqualTo(card);
     }
@@ -42,11 +42,11 @@ class CardServiceTest {
     @Test
     void testGetById() {
         final Integer cardId = 1;
-        final CardV2 card = getCard(cardId, LocalDateTime.now(), "question", "answer");
+        final Card card = getCard(cardId, LocalDateTime.now(), "question", "answer");
 
         when(cardRepository.findById(cardId)).thenReturn(Optional.of(card));
 
-        final CardV2 actual = cardService.getById(cardId);
+        final Card actual = cardService.getById(cardId);
 
         assertThat(actual).usingRecursiveComparison().isEqualTo(card);
     }
@@ -62,13 +62,13 @@ class CardServiceTest {
 
     @Test
     void testFindAllByIds() {
-        final CardV2 card1 = getCard(1, LocalDateTime.now(), "question1", "answer1");
-        final CardV2 card2 = getCard(2, LocalDateTime.now(), "question2", "answer2");
-        List<CardV2> expected = List.of(card1, card2);
+        final Card card1 = getCard(1, LocalDateTime.now(), "question1", "answer1");
+        final Card card2 = getCard(2, LocalDateTime.now(), "question2", "answer2");
+        List<Card> expected = List.of(card1, card2);
 
         when(cardRepository.findAllByIds(List.of(1, 2))).thenReturn(expected);
 
-        final List<CardV2> actual = cardService.getByIds(List.of(1, 2));
+        final List<Card> actual = cardService.getByIds(List.of(1, 2));
 
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class UserCard {
-    private CardV2 card;
+    private Card card;
     private Integer userId;
     private boolean favorite;
     private boolean learned;

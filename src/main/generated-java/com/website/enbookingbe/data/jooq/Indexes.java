@@ -4,7 +4,7 @@
 package com.website.enbookingbe.data.jooq;
 
 
-import com.website.enbookingbe.data.jooq.tables.User;
+import com.website.enbookingbe.data.jooq.tables.Users;
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.DSL;
@@ -21,6 +21,6 @@ public class Indexes {
     // INDEX definitions
     // -------------------------------------------------------------------------
 
-    public static final Index USER_ACTIVATION_KEY_IDX = Internal.createIndex(DSL.name("user_activation_key_idx"), User.USER, new OrderField[] { User.USER.ACTIVATION_KEY }, false);
-    public static final Index USER_EMAIL_IDX = Internal.createIndex(DSL.name("user_email_idx"), User.USER, new OrderField[] { User.USER.EMAIL }, true);
+    public static final Index USER_ACTIVATION_KEY_IDX = Internal.createIndex(DSL.name("user_activation_key_idx"), Users.USERS, new OrderField[] { Users.USERS.ACTIVATION_KEY }, false);
+    public static final Index USER_EMAIL_IDX = Internal.createIndex(DSL.name("user_email_idx"), Users.USERS, new OrderField[] { Users.USERS.EMAIL }, true);
 }

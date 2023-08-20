@@ -15,12 +15,20 @@ import static com.website.enbookingbe.quiz.domain.QuizCardStatus.COMPLETED;
 
 @Repository
 @RequiredArgsConstructor
-public class QuizCardRepository { // TODO implement
+public class QuizCardRepository {
     private final QuizRecordCardMapper mapper = new QuizRecordCardMapper();
 
     private final DSLContext dsl;
 
-    public List<QuizCard> findAll(Integer quizId) {
+    public void saveAll(List<QuizCard> quizCards) {
+        final List<QuizCardRecord> records = quizCards.stream()
+            .map(mapper::unmap)
+            .toList();
+
+        dsl.batchInsert(records).execute();
+    }
+
+    public List<QuizCard> findAllByQuizId(Integer quizId) {
         return dsl.select(QUIZ_CARD.fields())
             .from(QUIZ_CARD)
             .where(QUIZ_CARD.QUIZ_ID.eq(quizId))
@@ -33,14 +41,6 @@ public class QuizCardRepository { // TODO implement
             .where(QUIZ_CARD.QUIZ_ID.eq(quizId))
             .and(QUIZ_CARD.CARD_ID.eq(cardId))
             .fetchOptional(mapper);
-    }
-
-    public void saveAll(List<QuizCard> quizCards) {
-        final List<QuizCardRecord> records = quizCards.stream()
-            .map(mapper::unmap)
-            .toList();
-
-        dsl.batchInsert(records).execute();
     }
 
     public List<QuizCard> findNotCompleted(Integer quizId) {

@@ -1,7 +1,7 @@
 <!DOCTYPE dataset SYSTEM "src/test/resources/datasets/database.dtd">
 
 <dataset>
-    <usr
+    <users
             id="1"
             first_name="John"
             last_name="Doe"
